@@ -7,6 +7,8 @@ import (
 	"go/parser"
 	"go/token"
 	"os"
+
+	"github.com/ParteeLabs/gomiger/generator/helper"
 )
 
 func main() {
@@ -29,6 +31,9 @@ func main() {
 		fmt.Println("Error parsing template file migrator.mg.go:", err)
 		return
 	}
+
+	helper.UpdatePackageName(skeleton, "generator")
+
 	ast.Inspect(skeleton, func(n ast.Node) bool {
 		if nf, ok := n.(*ast.BasicLit); ok && nf.Value == "`__MIGRATION_SCRIPT_TEMPLATE__`" {
 			nf.Value = fmt.Sprintf("`%s`", string(migrationTemplateContent))

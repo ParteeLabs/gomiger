@@ -18,65 +18,33 @@ var MigratorTemplate = `package main
 
 import (
 	"context"
-	"fmt"
 
-	"github.com/ParteeLabs/gomiger/migrator"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"github.com/ParteeLabs/gomiger"
 )
-
-// MutationFunc is a function that applies a migration.
-type MutationFunc = func(context context.Context) error
-
-// Migration contain a version name and a mutation function.
-type Migration struct {
-	Version  string
-	Mutation MutationFunc
-}
 
 // Migrator is the main migrator struct.
 type Migrator struct {
-	Config      migrator.Config
-	MongoClient *mongo.Client
-
-	Ups   []Migration
-	Downs []Migration
+	gomiger.BaseMigrator
+	Config gomiger.Config
 }
 
 // NewMigrator creates a new migrator.
-func NewMigrator(config migrator.Config) *Migrator {
-	return &Migrator{
+func NewMigrator(config gomiger.Config) gomiger.Gomiger {
+	m := &Migrator{
 		Config: config,
-		Ups:    []Migration{},
-		Downs:  []Migration{},
 	}
+	// m.DB = NewMongomiger() ** Add your plugin here **
+
+	// ** Add your migrations here **
+	m.Migrations = []gomiger.Migration{
+		// {Version: "1.0.0", Up: m.MigrationNameUp, Down: m.MigrationNameDown},
+	}
+	return m
 }
 
-// MongoConnect connects to the MongoDB database.
-func (m *Migrator) MongoConnect(ctx context.Context) (err error) {
-	if m.MongoClient, err = mongo.Connect(ctx, options.Client().ApplyURI(m.Config.URI)); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Up applies the migrations.
-func (m *Migrator) Up(ctx context.Context) error {
-	for _, mi := range m.Ups {
-		if err := mi.Mutation(ctx); err != nil {
-			return fmt.Errorf("failed to apply migration %s: %w", mi.Version, err)
-		}
-	}
-	return nil
-}
-
-// Down reverts the migrations.
-func (m *Migrator) Down(ctx context.Context) error {
-	for _, mi := range m.Downs {
-		if err := mi.Mutation(ctx); err != nil {
-			return fmt.Errorf("failed to revert migration %s: %w", mi.Version, err)
-		}
-	}
+// Connect connects database.
+func (m *Migrator) Connect(ctx context.Context) (err error) {
+	// ** Call your plugin Connect func here **
 	return nil
 }
 `

@@ -10,6 +10,7 @@ var (
 	fs = token.NewFileSet()
 )
 
+// LoadTemplates load the preset template strings to ast.Node
 func LoadTemplates() (migrationNode *ast.File, migratorNode *ast.File, err error) {
 	migrationNode, err = parser.ParseFile(fs, "", MigrationScriptTemplate, parser.AllErrors)
 	if err != nil {
