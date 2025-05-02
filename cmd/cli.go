@@ -22,6 +22,9 @@ var initCmd = &cli.Command{
 		if err != nil {
 			return fmt.Errorf("Cannot load the gomiger.rc file: %w", err)
 		}
+		if generator.IsSrcCodeInitialized(rc) {
+			return fmt.Errorf("The source code is ALREADY INITIALIZED")
+		}
 		if err := generator.InitSrcCode(rc); err != nil {
 			return fmt.Errorf("Cannot init gomiger: %w", err)
 		}
@@ -37,6 +40,9 @@ var newCmd = &cli.Command{
 		rc, err := config.GetGomigerRC(rcPath)
 		if err != nil {
 			return fmt.Errorf("Cannot load the gomiger.rc file: %w", err)
+		}
+		if !generator.IsSrcCodeInitialized(rc) {
+			return fmt.Errorf("The source code is NOT INITIALIZED")
 		}
 		if err := generator.GenMigrationFile(rc, cmd.Args().Get(0)); err != nil {
 			return fmt.Errorf("Cannot generate migration file: %w", err)

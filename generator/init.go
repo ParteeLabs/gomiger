@@ -24,3 +24,9 @@ func InitSrcCode(rc *config.GomigerRC) error {
 	/// init the migrator file
 	return helper.ExportFile(migratorNode, rc.Path+"/migrator.mg.go")
 }
+
+// IsSrcCodeInitialized checks if the source code is initialized.
+func IsSrcCodeInitialized(rc *config.GomigerRC) bool {
+	_, err := os.Stat(rc.Path + "/migrator.mg.go")
+	return err == nil
+}
