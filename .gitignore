@@ -26,3 +26,8 @@ go.work.sum
 
 migrations
 gomiger.rc.yaml
+
+# MAC OS
+.DS_Store
+.AppleDouble
+.LSOverride
