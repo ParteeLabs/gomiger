@@ -56,8 +56,20 @@ type BaseMigrator struct {
 	Migrations []Migration
 }
 
+func (b *BaseMigrator) isVersionExists(version string) bool {
+	for _, mi := range b.Migrations {
+		if mi.Version == version {
+			return true
+		}
+	}
+	return false
+}
+
 // Up updates the database to a specific version.
 func (b *BaseMigrator) Up(ctx context.Context, toVersion string) error {
+	if toVersion != "" && !b.isVersionExists(toVersion) {
+		return fmt.Errorf("version %s does not exist", toVersion)
+	}
 	for _, mi := range b.Migrations {
 		schema, err := b.DB.GetSchema(ctx, mi.Version)
 		if err != nil {
@@ -78,6 +90,12 @@ func (b *BaseMigrator) Up(ctx context.Context, toVersion string) error {
 
 // Down reverts the database to a specific version.
 func (b *BaseMigrator) Down(ctx context.Context, atVersion string) error {
+	if atVersion == "" {
+		return fmt.Errorf("a version is required")
+	}
+	if !b.isVersionExists(atVersion) {
+		return fmt.Errorf("version %s does not exist", atVersion)
+	}
 	for i := len(b.Migrations); i >= 0; i-- {
 		mi := b.Migrations[i]
 		schema, err := b.DB.GetSchema(ctx, mi.Version)
