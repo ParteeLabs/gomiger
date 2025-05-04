@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/base64"
 	"fmt"
 	"go/ast"
 	"go/format"
@@ -11,6 +12,14 @@ import (
 	"github.com/ParteeLabs/gomiger/generator/helper"
 )
 
+// main is the script of the generator for `contents.mg.go`.
+// The generation process is as follows:
+//  1. Read the template files.
+//  2. Parse the skeleton file ./generator/mg/skeleton.go.
+//  3. Update the package name of the skeleton to "generator".
+//  4. Update the string literals in the skeleton to the contents of the
+//     template files.
+//  5. Write the updated skeleton to the output file.
 func main() {
 	/// Load template contents
 	migrationTemplateContent, err := os.ReadFile("./generator/mg/migration.mg.go")
@@ -21,6 +30,11 @@ func main() {
 	migratorTemplateContent, err := os.ReadFile("./generator/mg/migrator.mg.go")
 	if err != nil {
 		fmt.Println("Error reading template file migrator.mg.go:", err)
+		return
+	}
+	cliTemplateContent, err := os.ReadFile("./generator/mg/cli.mg.go")
+	if err != nil {
+		fmt.Println("Error reading template file cli.mg.go:", err)
 		return
 	}
 
@@ -36,11 +50,13 @@ func main() {
 
 	ast.Inspect(skeleton, func(n ast.Node) bool {
 		if nf, ok := n.(*ast.BasicLit); ok && nf.Value == "`__MIGRATION_SCRIPT_TEMPLATE__`" {
-			nf.Value = fmt.Sprintf("`%s`", string(migrationTemplateContent))
-			// nf.Value = "`" + string(migrationTemplateContent) + "`"
+			nf.Value = fmt.Sprintf("`%s`", base64.StdEncoding.EncodeToString(migrationTemplateContent))
 		}
 		if nf, ok := n.(*ast.BasicLit); ok && nf.Value == "`__MIGRATOR_TEMPLATE__`" {
-			nf.Value = fmt.Sprintf("`%s`", string(migratorTemplateContent))
+			nf.Value = fmt.Sprintf("`%s`", base64.StdEncoding.EncodeToString(migratorTemplateContent))
+		}
+		if nf, ok := n.(*ast.BasicLit); ok && nf.Value == "`__CLI_TEMPLATE__`" {
+			nf.Value = fmt.Sprintf("`%s`", base64.StdEncoding.EncodeToString(cliTemplateContent))
 		}
 		return true
 	})

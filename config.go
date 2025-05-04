@@ -1,4 +1,4 @@
-package config
+package gomiger
 
 import (
 	"fmt"
@@ -8,13 +8,17 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-// GomigerRC is the global migration module configuration.
-type GomigerRC struct {
+// GomigerConfig is the global migration module configuration.
+type GomigerConfig struct {
 	// Path to the migration root folder.
 	Path string `yaml:"path"`
 	// The package name of the migrator & migrations.
 	// Default by the folder name of the path.
 	PkgName string `yaml:"pkg_name"`
+	// Database connection string.
+	URI string `yaml:"uri"`
+	// The path to the table / collection schema store.
+	SchemaStore string `yaml:"schema_store"`
 }
 
 var (
@@ -23,7 +27,7 @@ var (
 )
 
 // ParseYAML parse the RC file in YAML format.
-func (rc *GomigerRC) ParseYAML(path string) error {
+func (rc *GomigerConfig) ParseYAML(path string) error {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return fmt.Errorf("Cannot read the gomiger.rc file: %w", err)
@@ -32,7 +36,7 @@ func (rc *GomigerRC) ParseYAML(path string) error {
 }
 
 // PopulateAndValidate populate data and validate it.
-func (rc *GomigerRC) PopulateAndValidate() error {
+func (rc *GomigerConfig) PopulateAndValidate() error {
 	/// options validate & populate
 	if rc.Path == "" {
 		rc.Path = defaultPath
@@ -51,11 +55,11 @@ func (rc *GomigerRC) PopulateAndValidate() error {
 }
 
 // GetGomigerRC returns the global migration module configuration
-func GetGomigerRC(rcPath string) (*GomigerRC, error) {
+func GetGomigerRC(rcPath string) (*GomigerConfig, error) {
 	if rcPath == "" {
 		rcPath = defaultRcPath
 	}
-	rc := &GomigerRC{}
+	rc := &GomigerConfig{}
 	if err := rc.ParseYAML(rcPath); err != nil {
 		return nil, err
 	}

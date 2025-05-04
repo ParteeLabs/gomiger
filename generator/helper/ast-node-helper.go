@@ -26,13 +26,13 @@ func UpdateFuncName(node *ast.File, targetFuncName, newFuncName string) *ast.Fil
 }
 
 // ExportFile exports the node to a file
-func ExportFile(node *ast.File, path string) error {
+func ExportFile(node *ast.File, fs *token.FileSet, path string) error {
 	file, err := os.Create(path)
 	if err != nil {
 		return fmt.Errorf("failed to create file: %w", err)
 	}
 	defer file.Close()
-	if err := format.Node(file, token.NewFileSet(), node); err != nil {
+	if err := format.Node(file, fs, node); err != nil {
 		return fmt.Errorf("failed to format ast.File node to file: %w", err)
 	}
 	return nil

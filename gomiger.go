@@ -6,21 +6,6 @@ import (
 	"time"
 )
 
-// DbType is the type of the database
-type DbType string
-
-var (
-	Mongo DbType = "mongo"
-)
-
-// Config is the configuration for the database
-type Config struct {
-	Type        DbType `json:"type" yaml:"type" validate:"required,oneof=mongo"`
-	SchemaStore string `json:"schema_store" yaml:"schema_store" validate:"required"`
-	URI         string `json:"uri" yaml:"uri" validate:"required"`
-	Path        string `json:"path" yaml:"path" validate:"required"`
-}
-
 // SchemaStatus is the status of the schema
 type SchemaStatus string
 

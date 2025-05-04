@@ -9,11 +9,11 @@ import (
 // Migrator is the main migrator struct.
 type Migrator struct {
 	gomiger.BaseMigrator
-	Config gomiger.Config
+	Config *gomiger.GomigerConfig
 }
 
 // NewMigrator creates a new migrator.
-func NewMigrator(config gomiger.Config) gomiger.Gomiger {
+func NewMigrator(config *gomiger.GomigerConfig) gomiger.Gomiger {
 	m := &Migrator{
 		Config: config,
 	}
