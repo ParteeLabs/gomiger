@@ -1,4 +1,4 @@
-module github.com/ParteeLabs/gomiger
+module github.com/ParteeLabs/gomiger/core
 
 go 1.23.3
 

@@ -3,24 +3,24 @@ package main
 import (
 	"context"
 
-	"github.com/ParteeLabs/gomiger"
+	"github.com/ParteeLabs/gomiger/core"
 )
 
 // Migrator is the main migrator struct.
 type Migrator struct {
-	gomiger.BaseMigrator
-	Config *gomiger.GomigerConfig
+	core.BaseMigrator
+	Config *core.GomigerConfig
 }
 
 // NewMigrator creates a new migrator.
-func NewMigrator(config *gomiger.GomigerConfig) gomiger.Gomiger {
+func NewMigrator(config *core.GomigerConfig) core.Gomiger {
 	m := &Migrator{
 		Config: config,
 	}
 	// m.DB = NewMongomiger() ** Add your plugin here **
 
 	// ** Add your migrations here **
-	m.Migrations = []gomiger.Migration{
+	m.Migrations = []core.Migration{
 		// {Version: "1.0.0", Up: m.MigrationNameUp, Down: m.MigrationNameDown},
 	}
 	return m

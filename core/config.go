@@ -1,4 +1,4 @@
-package gomiger
+package core
 
 import (
 	"fmt"
