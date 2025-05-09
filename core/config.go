@@ -45,9 +45,7 @@ func (rc *GomigerConfig) PopulateAndValidate() error {
 	if err != nil {
 		return fmt.Errorf("Migration root path is not valid: %w", err)
 	}
-	if rootDir, _ := filepath.Abs("./"); rootDir != absPath {
-		rc.Path = defaultPath
-	}
+	rc.Path = absPath
 	if rc.PkgName == "" {
 		rc.PkgName = filepath.Dir(rc.Path)
 	}

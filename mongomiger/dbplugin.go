@@ -14,7 +14,8 @@ import (
 // Mongomiger implements core.DbPlugin for MongoDB.
 type Mongomiger struct {
 	uri              string
-	client           *mongo.Client
+	Client           *mongo.Client
+	Db               *mongo.Database
 	schemaStore      string
 	schemaCollection *mongo.Collection
 }
@@ -35,10 +36,11 @@ func (m *Mongomiger) Connect(_ context.Context) (err error) {
 		return
 	}
 	// Connect and get the schema collection.
-	if m.client, err = mongo.Connect(options.Client().ApplyURI(m.uri)); err != nil {
+	if m.Client, err = mongo.Connect(options.Client().ApplyURI(m.uri)); err != nil {
 		return
 	}
-	m.schemaCollection = m.client.Database(connStr.Database).Collection(m.schemaStore)
+	m.Db = m.Client.Database(connStr.Database)
+	m.schemaCollection = m.Db.Collection(m.schemaStore)
 	return
 }
 
