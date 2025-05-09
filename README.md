@@ -24,7 +24,7 @@ schema_store: '' # Database schema store
 Initialize the source code.
 
 ```bash
-go get github.com/ParteeLabs/gomiger/core/cmd/init
+go run github.com/ParteeLabs/gomiger/core/cmd/gomiger-init
 ```
 
 Add a migration.
