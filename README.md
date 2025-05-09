@@ -7,7 +7,7 @@ A Golang framework for data migration.
 ## install
 
 ```bash
-go get github.com/ParteeLabs/gomiger
+go get github.com/ParteeLabs/gomiger/core
 ```
 
 Add the `gomiger.rc.yaml` file to the root of your project.
@@ -24,7 +24,7 @@ schema_store: '' # Database schema store
 Initialize the source code.
 
 ```bash
-go get github.com/ParteeLabs/gomiger/cmd/init
+go get github.com/ParteeLabs/gomiger/core/cmd/init
 ```
 
 Add a migration.

@@ -3,14 +3,14 @@ package main
 import (
 	"log"
 
-	"github.com/ParteeLabs/gomiger"
-	"github.com/ParteeLabs/gomiger/generator"
+	"github.com/ParteeLabs/gomiger/core"
+	"github.com/ParteeLabs/gomiger/core/generator"
 )
 
 var rcPath string
 
 func main() {
-	rc, err := gomiger.GetGomigerRC(rcPath)
+	rc, err := core.GetGomigerRC(rcPath)
 	if err != nil {
 		log.Fatalf("Cannot load the gomiger.rc file: %s", err)
 	}

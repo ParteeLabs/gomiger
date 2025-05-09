@@ -8,8 +8,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/ParteeLabs/gomiger"
-	"github.com/ParteeLabs/gomiger/generator"
+	"github.com/ParteeLabs/gomiger/core"
+	"github.com/ParteeLabs/gomiger/core/generator"
 	"github.com/urfave/cli/v3"
 )
 
@@ -40,7 +40,7 @@ var newCmd = &cli.Command{
 	Aliases: []string{"n"},
 	Usage:   "generate a new migration",
 	Action: func(_ context.Context, cmd *cli.Command) error {
-		rc, err := gomiger.GetGomigerRC(rcPath)
+		rc, err := core.GetGomigerRC(rcPath)
 		if err != nil {
 			return fmt.Errorf("Cannot load the gomiger.rc file: %w", err)
 		}
@@ -59,14 +59,14 @@ var migrateUpCmd = &cli.Command{
 	Aliases: []string{"m"},
 	Usage:   "migrate the database up to a version",
 	Action: func(ctx context.Context, _ *cli.Command) error {
-		rc, err := gomiger.GetGomigerRC(rcPath)
+		rc, err := core.GetGomigerRC(rcPath)
 		if err != nil {
 			return fmt.Errorf("Cannot load the gomiger.rc file: %w", err)
 		}
 		if !generator.IsSrcCodeInitialized(rc) {
 			return fmt.Errorf("The source code is NOT INITIALIZED")
 		}
-		migrator := NewMigrator(&gomiger.GomigerConfig{})
+		migrator := NewMigrator(&core.GomigerConfig{})
 		if err := migrator.Connect(ctx); err != nil {
 			return fmt.Errorf("Cannot connect to database: %w", err)
 		}
@@ -82,14 +82,14 @@ var migrateDownCmd = &cli.Command{
 	Aliases: []string{"d"},
 	Usage:   "migrate the database down to a version",
 	Action: func(ctx context.Context, _ *cli.Command) error {
-		rc, err := gomiger.GetGomigerRC(rcPath)
+		rc, err := core.GetGomigerRC(rcPath)
 		if err != nil {
 			return fmt.Errorf("Cannot load the gomiger.rc file: %w", err)
 		}
 		if !generator.IsSrcCodeInitialized(rc) {
 			return fmt.Errorf("The source code is NOT INITIALIZED")
 		}
-		migrator := NewMigrator(&gomiger.GomigerConfig{})
+		migrator := NewMigrator(&core.GomigerConfig{})
 		if err := migrator.Connect(ctx); err != nil {
 			return fmt.Errorf("Cannot connect to database: %w", err)
 		}

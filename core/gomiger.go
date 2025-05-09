@@ -1,4 +1,4 @@
-package gomiger
+package core
 
 import (
 	"context"
@@ -35,7 +35,7 @@ type Gomiger interface {
 // DbPlugin is the interface for the plugin
 type DbPlugin interface {
 	Connect(ctx context.Context) error
-	GetSchema(ctx context.Context, version string) (Schema, error)
+	GetSchema(ctx context.Context, version string) (*Schema, error)
 	ApplyMigration(ctx context.Context, mi Migration) error
 	RevertMigration(ctx context.Context, mi Migration) error
 }

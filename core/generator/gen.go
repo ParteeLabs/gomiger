@@ -10,8 +10,8 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/ParteeLabs/gomiger"
-	"github.com/ParteeLabs/gomiger/generator/helper"
+	"github.com/ParteeLabs/gomiger/core"
+	"github.com/ParteeLabs/gomiger/core/generator/helper"
 )
 
 type Template struct {
@@ -47,7 +47,7 @@ func LoadTemplates() ([]Template, error) {
 }
 
 // InitSrcCode initializes the source code
-func InitSrcCode(rc *gomiger.GomigerConfig) error {
+func InitSrcCode(rc *core.GomigerConfig) error {
 	templates, err := LoadTemplates()
 	if err != nil {
 		return fmt.Errorf("Cannot load the templates: %w", err)
@@ -72,13 +72,13 @@ func InitSrcCode(rc *gomiger.GomigerConfig) error {
 }
 
 // IsSrcCodeInitialized checks if the source code is initialized.
-func IsSrcCodeInitialized(rc *gomiger.GomigerConfig) bool {
+func IsSrcCodeInitialized(rc *core.GomigerConfig) bool {
 	_, err := os.Stat(rc.Path + "/migrator.mg.go")
 	return err == nil
 }
 
 // GenMigrationFile generates a migration file
-func GenMigrationFile(rc *gomiger.GomigerConfig, name string) error {
+func GenMigrationFile(rc *core.GomigerConfig, name string) error {
 	// Create the migration file path
 	timestamp := time.Now().Format("20060102150405")
 	filePath := filepath.Join(rc.Path, fmt.Sprintf("%s_%s.mg.go", timestamp, name))

@@ -9,7 +9,7 @@ import (
 	"go/token"
 	"os"
 
-	"github.com/ParteeLabs/gomiger/generator/helper"
+	"github.com/ParteeLabs/gomiger/core/generator/helper"
 )
 
 // main is the script of the generator for `contents.mg.go`.
@@ -22,17 +22,17 @@ import (
 //  5. Write the updated skeleton to the output file.
 func main() {
 	/// Load template contents
-	migrationTemplateContent, err := os.ReadFile("./generator/mg/migration.mg.go")
+	migrationTemplateContent, err := os.ReadFile("./core/generator/mg/migration.mg.go")
 	if err != nil {
 		fmt.Println("Error reading template file migration.mg.go:", err)
 		return
 	}
-	migratorTemplateContent, err := os.ReadFile("./generator/mg/migrator.mg.go")
+	migratorTemplateContent, err := os.ReadFile("./core/generator/mg/migrator.mg.go")
 	if err != nil {
 		fmt.Println("Error reading template file migrator.mg.go:", err)
 		return
 	}
-	cliTemplateContent, err := os.ReadFile("./generator/mg/cli.mg.go")
+	cliTemplateContent, err := os.ReadFile("./core/generator/mg/cli.mg.go")
 	if err != nil {
 		fmt.Println("Error reading template file cli.mg.go:", err)
 		return
@@ -40,7 +40,7 @@ func main() {
 
 	/// Parse the skeleton then add the templates
 	fs := token.NewFileSet()
-	skeleton, err := parser.ParseFile(fs, "./generator/mg/skeleton.go", nil, parser.AllErrors)
+	skeleton, err := parser.ParseFile(fs, "./core/generator/mg/skeleton.go", nil, parser.AllErrors)
 	if err != nil {
 		fmt.Println("Error parsing template file migrator.mg.go:", err)
 		return
@@ -62,7 +62,7 @@ func main() {
 	})
 
 	/// Write the libContentsFile
-	libContentsFile, err := os.Create("./generator/contents.mg.go")
+	libContentsFile, err := os.Create("./core/generator/contents.mg.go")
 	if err != nil {
 		panic(err)
 	}
