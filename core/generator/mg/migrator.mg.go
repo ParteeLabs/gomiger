@@ -28,6 +28,5 @@ func NewMigrator(config *core.GomigerConfig) core.Gomiger {
 
 // Connect connects database.
 func (m *Migrator) Connect(ctx context.Context) (err error) {
-	// ** Call your plugin Connect func here **
-	return nil
+	return m.DB.Connect(ctx)
 }

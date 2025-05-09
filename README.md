@@ -27,6 +27,28 @@ Initialize the source code.
 go run github.com/ParteeLabs/gomiger/core/cmd/gomiger-init
 ```
 
+Use a DB plugin
+
+For MongoDB
+
+First, install the DB plugin
+
+```bash
+go get github.com/ParteeLabs/gomiger/mongomiger
+```
+
+Then add the DB plugin to your generate `migrator.mg.go` file.
+
+```diff
+func NewMigrator(config *core.GomigerConfig) core.Gomiger {
+	m := &Migrator{
+		Config: config,
+	}
++	m.DB = mongomiger.NewMongomiger(config)
+...
+}
+```
+
 Add a migration.
 
 ```bash
