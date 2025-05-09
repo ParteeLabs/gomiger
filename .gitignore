@@ -20,8 +20,8 @@
 # env file
 .env
 
-migrations
-gomiger.rc.yaml
+/migrations/
+/gomiger.rc.yaml
 
 # MAC OS
 .DS_Store
