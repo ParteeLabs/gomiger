@@ -1,6 +1,8 @@
 package main
 
-import "context"
+import (
+	"context"
+)
 
 func (m *Migrator) MigrationNameUp(ctx context.Context) error {
 	/** Your migration up code here: */

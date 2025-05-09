@@ -52,7 +52,7 @@ type Migration struct {
 
 // BaseMigrator is the base migrator for control flow.
 type BaseMigrator struct {
-	DB         DbPlugin
+	DbPlugin
 	Migrations []Migration
 }
 
@@ -71,14 +71,14 @@ func (b *BaseMigrator) Up(ctx context.Context, toVersion string) error {
 		return fmt.Errorf("version %s does not exist", toVersion)
 	}
 	for _, mi := range b.Migrations {
-		schema, err := b.DB.GetSchema(ctx, mi.Version)
+		schema, err := b.GetSchema(ctx, mi.Version)
 		if err != nil {
 			return fmt.Errorf("failed to get schema: %w", err)
 		}
 		if schema.Status == Applied || schema.Status == Dirty {
 			continue
 		}
-		if err := b.DB.ApplyMigration(ctx, mi); err != nil {
+		if err := b.ApplyMigration(ctx, mi); err != nil {
 			return fmt.Errorf("failed to apply migration %s: %w", mi.Version, err)
 		}
 		if mi.Version == toVersion {
@@ -98,14 +98,14 @@ func (b *BaseMigrator) Down(ctx context.Context, atVersion string) error {
 	}
 	for i := len(b.Migrations); i >= 0; i-- {
 		mi := b.Migrations[i]
-		schema, err := b.DB.GetSchema(ctx, mi.Version)
+		schema, err := b.GetSchema(ctx, mi.Version)
 		if err != nil {
 			return fmt.Errorf("failed to get schema: %w", err)
 		}
 		if schema.Status == Applied || schema.Status == Dirty {
 			continue
 		}
-		if err := b.DB.RevertMigration(ctx, mi); err != nil {
+		if err := b.RevertMigration(ctx, mi); err != nil {
 			return fmt.Errorf("failed to revert migration %s: %w", mi.Version, err)
 		}
 		if mi.Version == atVersion {

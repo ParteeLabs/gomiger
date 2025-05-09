@@ -89,8 +89,8 @@ func GenMigrationFile(rc *core.GomigerConfig, name string) error {
 		return fmt.Errorf("Cannot load the templates: %w", err)
 	}
 	helper.UpdatePackageName(migration.node, rc.PkgName)
-	helper.UpdateFuncName(migration.node, "MigrationNameUp", fmt.Sprintf("Migration_%s_Up", name))
-	helper.UpdateFuncName(migration.node, "MigrationNameDown", fmt.Sprintf("Migration_%s_Down", name))
+	helper.UpdateFuncName(migration.node, "MigrationNameUp", fmt.Sprintf("Migration_%s_%s_Up", timestamp, name))
+	helper.UpdateFuncName(migration.node, "MigrationNameDown", fmt.Sprintf("Migration_%s_%s_Down", timestamp, name))
 
 	return helper.ExportFile(migration.node, migration.fs, filePath)
 }

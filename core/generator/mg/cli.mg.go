@@ -15,7 +15,8 @@ import (
 
 var rcPath string
 
-func main() {
+// Run starts the CLI
+func Run() {
 	cmd := &cli.Command{
 		Flags: []cli.Flag{
 			&cli.StringFlag{
@@ -28,6 +29,8 @@ func main() {
 		},
 		Commands: []*cli.Command{
 			newCmd,
+			migrateUpCmd,
+			migrateDownCmd,
 		},
 	}
 	if err := cmd.Run(context.Background(), os.Args); err != nil {
