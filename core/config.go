@@ -16,7 +16,7 @@ type GomigerConfig struct {
 	// Default by the folder name of the path.
 	PkgName string `yaml:"pkg_name"`
 	// Database connection string.
-	URI string `yaml:"uri"`
+	URI string
 	// The path to the table / collection schema store.
 	SchemaStore string `yaml:"schema_store"`
 }
@@ -61,6 +61,7 @@ func GetGomigerRC(rcPath string) (*GomigerConfig, error) {
 	if err := rc.ParseYAML(rcPath); err != nil {
 		return nil, err
 	}
+	rc.URI = os.Getenv("GOMIGER_URI")
 	if err := rc.PopulateAndValidate(); err != nil {
 		return nil, err
 	}

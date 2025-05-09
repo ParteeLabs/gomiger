@@ -16,7 +16,6 @@ go get github.com/urfave/cli/v3 # Optional, if you want to use the CLI
 ```yaml
 path: './migrations' # Path to the migrations folder
 pkg_name: 'mgr' # Package name
-uri: '' # Database URI
 schema_store: '' # Database schema store
 ```
 
@@ -65,11 +64,20 @@ go get github.com/ParteeLabs/gomiger/mongomiger
 Then add the DB plugin to your generate `migrator.mg.go` file.
 
 ```diff
+type Migrator struct {
+	core.BaseMigrator
++	*mongomiger.Mongomiger
+	Config *core.GomigerConfig
+}
 func NewMigrator(config *core.GomigerConfig) core.Gomiger {
++	mongomiger := mongomiger.NewMongomiger(config)
 	m := &Migrator{
+		BaseMigrator: core.BaseMigrator{
++			DbPlugin: mongomiger,
+		},
++		Mongomiger: mongomiger,
 		Config: config,
 	}
-+	m.DB = mongomiger.NewMongomiger(config)
 ...
 }
 ```
@@ -89,6 +97,7 @@ go run cli.go new migration_name
 **Run migrations up.**
 
 ```bash
+export GOMIGER_URI="mongodb://localhost:27017"
 go run cli.go up # To run all migrations
 go run cli.go up version # To stop at a specific version
 ```
@@ -96,5 +105,6 @@ go run cli.go up version # To stop at a specific version
 **Run migrations down.**
 
 ```bash
+export GOMIGER_URI="mongodb://localhost:27017"
 go run cli.go down version
 ```

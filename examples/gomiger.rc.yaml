@@ -1,0 +1,3 @@
+path: 'migrations' # Path to the migrations folder
+pkg_name: 'mgr' # Package name
+schema_store: 'schemas' # Database schema store
