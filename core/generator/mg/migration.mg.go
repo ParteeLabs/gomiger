@@ -13,3 +13,8 @@ func (m *Migrator) MigrationNameDown(ctx context.Context) error {
 	/** Your migration down code here: */
 	return nil
 }
+
+// AUTO GENERATED, DO NOT MODIFY!
+func (m *Migrator) MigrationNameVersion() string {
+	return "__VERSION__"
+}

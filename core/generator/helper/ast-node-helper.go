@@ -25,6 +25,18 @@ func UpdateFuncName(node *ast.File, targetFuncName, newFuncName string) *ast.Fil
 	return node
 }
 
+// UpdateStringValue updates the string value
+func UpdateStringValue(node *ast.File, targetValue, newValue string) *ast.File {
+	fmtedTargetValue := fmt.Sprintf("\"%s\"", targetValue)
+	ast.Inspect(node, func(n ast.Node) bool {
+		if f, ok := n.(*ast.BasicLit); ok && f.Value == fmtedTargetValue {
+			f.Value = fmt.Sprintf("\"%s\"", newValue)
+		}
+		return true
+	})
+	return node
+}
+
 // ExportFile exports the node to a file
 func ExportFile(node *ast.File, fs *token.FileSet, path string) error {
 	file, err := os.Create(path)

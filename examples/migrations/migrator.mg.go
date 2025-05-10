@@ -7,19 +7,14 @@ import (
 
 // Migrator is the main migrator struct.
 type Migrator struct {
-	core.BaseMigrator
 	*mongomiger.Mongomiger
 	Config *core.GomigerConfig
 }
 
 // NewMigrator creates a new migrator.
 func NewMigrator(config *core.GomigerConfig) core.Gomiger {
-	mongomiger := mongomiger.NewMongomiger(config)
 	m := &Migrator{
-		BaseMigrator: core.BaseMigrator{
-			DbPlugin: mongomiger,
-		},
-		Mongomiger: mongomiger,
+		Mongomiger: mongomiger.NewMongomiger(config),
 		Config:     config,
 	}
 

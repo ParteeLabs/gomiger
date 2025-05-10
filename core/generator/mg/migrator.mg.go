@@ -6,26 +6,23 @@ import (
 
 // Migrator is the main migrator struct.
 type Migrator struct {
-	core.BaseMigrator
+	// BaseMigrator doses not involve to any database. Use our plugins to connect to your database.
+	// Or override Connect, GetSchema, ApplyMigration, RevertMigration methods to implement with your database.
+	*core.BaseMigrator
 	// *mongomiger.Mongomiger
 	Config *core.GomigerConfig
 }
 
 // NewMigrator creates a new migrator.
 func NewMigrator(config *core.GomigerConfig) core.Gomiger {
-	// Construct the plugin
-	// mongomiger := mongomiger.NewMongomiger(config)
 	m := &Migrator{
-		BaseMigrator: core.BaseMigrator{
-			// DbPlugin: mongomiger,
-		},
-		// Mongomiger: mongomiger,
+		// Mongomiger: mongomiger.NewMongomiger(config),
 		Config: config,
 	}
 
 	// ** Add your migrations here **
 	m.Migrations = []core.Migration{
-		// {Version: "1.0.0", Up: m.MigrationNameUp, Down: m.MigrationNameDown},
+		// {Version: MigrationNameVersion(), Up: m.MigrationNameUp, Down: m.MigrationNameDown},
 	}
 	return m
 }

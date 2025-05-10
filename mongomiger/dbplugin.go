@@ -13,6 +13,7 @@ import (
 
 // Mongomiger implements core.DbPlugin for MongoDB.
 type Mongomiger struct {
+	*core.BaseMigrator
 	uri              string
 	Client           *mongo.Client
 	Db               *mongo.Database
@@ -99,4 +100,4 @@ func (m *Mongomiger) RevertMigration(ctx context.Context, mi core.Migration) err
 }
 
 // Interface check
-var _ core.DbPlugin = (*Mongomiger)(nil)
+var _ core.Gomiger = (*Mongomiger)(nil)

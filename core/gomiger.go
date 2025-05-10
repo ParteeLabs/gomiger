@@ -2,6 +2,7 @@ package core
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 )
@@ -30,11 +31,6 @@ type Gomiger interface {
 	Up(ctx context.Context, toVersion string) error
 	Down(ctx context.Context, atVersion string) error
 	Connect(ctx context.Context) error
-}
-
-// DbPlugin is the interface for the plugin
-type DbPlugin interface {
-	Connect(ctx context.Context) error
 	GetSchema(ctx context.Context, version string) (*Schema, error)
 	ApplyMigration(ctx context.Context, mi Migration) error
 	RevertMigration(ctx context.Context, mi Migration) error
@@ -50,9 +46,9 @@ type Migration struct {
 	Down    MutationFunc
 }
 
-// BaseMigrator is the base migrator for control flow.
+// BaseMigrator is the base migrator for controlling flow.
+// It does not connect or execute to any database.
 type BaseMigrator struct {
-	DbPlugin
 	Migrations []Migration
 }
 
@@ -113,4 +109,24 @@ func (b *BaseMigrator) Down(ctx context.Context, atVersion string) error {
 		}
 	}
 	return nil
+}
+
+// Connect connects to the database.
+func (b *BaseMigrator) Connect(_ context.Context) error {
+	return errors.New("Not implemented")
+}
+
+// GetSchema returns the schema at a specific version.
+func (b *BaseMigrator) GetSchema(_ context.Context, _ string) (*Schema, error) {
+	return nil, errors.New("Not implemented")
+}
+
+// ApplyMigration applies a migration.
+func (b *BaseMigrator) ApplyMigration(_ context.Context, _ Migration) error {
+	return errors.New("Not implemented")
+}
+
+// RevertMigration reverts a migration.
+func (b *BaseMigrator) RevertMigration(_ context.Context, _ Migration) error {
+	return errors.New("Not implemented")
 }

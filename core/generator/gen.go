@@ -80,7 +80,7 @@ func IsSrcCodeInitialized(rc *core.GomigerConfig) bool {
 // GenMigrationFile generates a migration file
 func GenMigrationFile(rc *core.GomigerConfig, name string) error {
 	// Create the migration file path
-	timestamp := time.Now().Format("20060102150405")
+	timestamp := time.Now().Format("200601021504")
 	filePath := filepath.Join(rc.Path, fmt.Sprintf("%s_%s.mg.go", timestamp, name))
 
 	templates, err := LoadTemplates()
@@ -88,9 +88,12 @@ func GenMigrationFile(rc *core.GomigerConfig, name string) error {
 	if err != nil {
 		return fmt.Errorf("Cannot load the templates: %w", err)
 	}
+
 	helper.UpdatePackageName(migration.node, rc.PkgName)
 	helper.UpdateFuncName(migration.node, "MigrationNameUp", fmt.Sprintf("Migration_%s_%s_Up", timestamp, name))
 	helper.UpdateFuncName(migration.node, "MigrationNameDown", fmt.Sprintf("Migration_%s_%s_Down", timestamp, name))
+	helper.UpdateFuncName(migration.node, "MigrationNameVersion", fmt.Sprintf("Migration_%s_%s_Version", timestamp, name))
+	helper.UpdateStringValue(migration.node, "__VERSION__", timestamp)
 
 	return helper.ExportFile(migration.node, migration.fs, filePath)
 }
