@@ -1,0 +1,93 @@
+version: 2
+
+project_name: gomiger
+
+before:
+  hooks:
+    - go mod tidy
+    - go generate ./...
+
+builds:
+  - id: gomiger-init
+    main: ./core/cmd/gomiger-init
+    binary: gomiger-init
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    env:
+      - CGO_ENABLED=0
+    ldflags:
+      - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}}
+
+archives:
+  - id: gomiger-init
+    builds:
+      - gomiger-init
+    format: tar.gz
+    format_overrides:
+      - goos: windows
+        format: zip
+    files:
+      - README.md
+      - LICENSE
+      - examples/*
+
+checksum:
+  name_template: 'checksums.txt'
+
+snapshot:
+  name_template: '{{ incpatch .Version }}-next'
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+      - '^chore:'
+      - '^ci:'
+
+release:
+  github:
+    owner: ParteeLabs
+    name: gomiger
+  draft: false
+  prerelease: auto
+  name_template: '{{.ProjectName}} v{{.Version}}'
+  header: |
+    ## Gomiger {{.Version}}
+
+    A powerful Go migration framework with plugin architecture.
+
+    ### 🚀 What's New
+  footer: |
+    ## Installation
+
+    ### Binary Installation
+    Download the appropriate binary for your system from the [releases page](https://github.com/ParteeLabs/gomiger/releases).
+
+    ### Go Install
+    ```bash
+    go install github.com/ParteeLabs/gomiger/core/cmd/gomiger-init@latest
+    ```
+
+    ### Module Installation
+    ```bash
+    go get github.com/ParteeLabs/gomiger/core
+    go get github.com/ParteeLabs/gomiger/mongomiger  # For MongoDB support
+    ```
+
+    ## Quick Start
+
+    1. Create a `gomiger.rc.yaml` configuration file
+    2. Run `gomiger-init` to initialize your migration project
+    3. Add your database plugin and start creating migrations!
+
+    For more information, see our [documentation](https://github.com/ParteeLabs/gomiger).
+
+    ---
+    **Full Changelog**: https://github.com/ParteeLabs/gomiger/compare/{{.PreviousTag}}...{{.Tag}}

@@ -31,6 +31,7 @@ func Run() {
 			newCmd,
 			migrateUpCmd,
 			migrateDownCmd,
+			getMigrationStatusCmd,
 		},
 	}
 	if err := cmd.Run(context.Background(), os.Args); err != nil {
@@ -61,7 +62,7 @@ var migrateUpCmd = &cli.Command{
 	Name:    "up",
 	Aliases: []string{"m"},
 	Usage:   "migrate the database up to a version",
-	Action: func(ctx context.Context, _ *cli.Command) error {
+	Action: func(ctx context.Context, cmd *cli.Command) error {
 		rc, err := core.GetGomigerRC(rcPath)
 		if err != nil {
 			return fmt.Errorf("Cannot load the gomiger.rc file: %w", err)
@@ -73,7 +74,7 @@ var migrateUpCmd = &cli.Command{
 		if err := migrator.Connect(ctx); err != nil {
 			return fmt.Errorf("Cannot connect to database: %w", err)
 		}
-		if err := migrator.Up(ctx, ""); err != nil {
+		if err := migrator.Up(ctx, cmd.Args().Get(0)); err != nil {
 			return fmt.Errorf("Cannot migrate the database: %w", err)
 		}
 		return nil
@@ -84,7 +85,7 @@ var migrateDownCmd = &cli.Command{
 	Name:    "down",
 	Aliases: []string{"d"},
 	Usage:   "migrate the database down to a version",
-	Action: func(ctx context.Context, _ *cli.Command) error {
+	Action: func(ctx context.Context, cmd *cli.Command) error {
 		rc, err := core.GetGomigerRC(rcPath)
 		if err != nil {
 			return fmt.Errorf("Cannot load the gomiger.rc file: %w", err)
@@ -96,9 +97,34 @@ var migrateDownCmd = &cli.Command{
 		if err := migrator.Connect(ctx); err != nil {
 			return fmt.Errorf("Cannot connect to database: %w", err)
 		}
-		if err := migrator.Down(ctx, ""); err != nil {
+		if err := migrator.Down(ctx, cmd.Args().Get(0)); err != nil {
 			return fmt.Errorf("Cannot migrate the database: %w", err)
 		}
+		return nil
+	},
+}
+
+var getMigrationStatusCmd = &cli.Command{
+	Name:    "status",
+	Aliases: []string{"s"},
+	Usage:   "get the current migration status",
+	Action: func(ctx context.Context, cmd *cli.Command) error {
+		rc, err := core.GetGomigerRC(rcPath)
+		if err != nil {
+			return fmt.Errorf("Cannot load the gomiger.rc file: %w", err)
+		}
+		if !generator.IsSrcCodeInitialized(rc) {
+			return fmt.Errorf("The source code is NOT INITIALIZED")
+		}
+		migrator := NewMigrator(&core.GomigerConfig{})
+		if err := migrator.Connect(ctx); err != nil {
+			return fmt.Errorf("Cannot connect to database: %w", err)
+		}
+		schema, err := migrator.GetSchema(ctx, cmd.Args().Get(0))
+		if err != nil {
+			return fmt.Errorf("Cannot get schema: %w", err)
+		}
+		fmt.Printf("Version: %s, Status: %s\n", schema.Version, schema.Status)
 		return nil
 	},
 }

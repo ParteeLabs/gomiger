@@ -2,16 +2,39 @@ package mgr
 
 import (
 	"context"
+
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 func (m *Migrator) Migration_202505101419_users_Up(ctx context.Context) error {
-	/** Your migration up code here: */
-	return nil
+	validator := bson.M{
+		"$jsonSchema": bson.M{
+			"bsonType": "object",
+			"required": []string{"email", "created_at"},
+			"properties": bson.M{
+				"email": bson.M{
+					"bsonType":    "string",
+					"description": "must be a string and is required",
+				},
+				"name": bson.M{
+					"bsonType":    "string",
+					"description": "user's full name",
+				},
+				"created_at": bson.M{
+					"bsonType":    "date",
+					"description": "must be a date and is required",
+				},
+			},
+		},
+	}
+
+	opts := options.CreateCollection().SetValidator(validator)
+	return m.Db.CreateCollection(ctx, "users", opts)
 }
 
 func (m *Migrator) Migration_202505101419_users_Down(ctx context.Context) error {
-	/** Your migration down code here: */
-	return nil
+	return m.Db.Collection("users").Drop(ctx)
 }
 
 // AUTO GENERATED, DO NOT MODIFY!
