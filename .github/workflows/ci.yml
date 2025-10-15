@@ -1,0 +1,184 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  release:
+    types: [published]
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: ['1.21', '1.22', '1.23']
+        mongodb-version: ['4.4', '5.0', '6.0', '7.0']
+    
+    services:
+      mongodb:
+        image: mongo:${{ matrix.mongodb-version }}
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.adminCommand(\"ping\")'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: ${{ matrix.go-version }}
+
+    - name: Cache Go modules
+      uses: actions/cache@v4
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ matrix.go-version }}-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-${{ matrix.go-version }}-
+
+    - name: Download dependencies
+      run: |
+        cd core && go mod download
+        cd ../mongomiger && go mod download
+        cd ../examples && go mod download
+
+    - name: Run tests (Core)
+      run: cd core && go test -v -race -coverprofile=coverage.out ./...
+
+    - name: Run tests (MongoDB Plugin)
+      env:
+        GOMIGER_URI: mongodb://localhost:27017/gomiger_test
+      run: cd mongomiger && go test -v -race -coverprofile=coverage.out ./...
+
+    - name: Run tests (Examples)
+      env:
+        GOMIGER_URI: mongodb://localhost:27017/gomiger_example_test
+      run: cd examples && go test -v ./...
+
+    - name: Upload coverage to Codecov (Core)
+      uses: codecov/codecov-action@v4
+      with:
+        file: ./core/coverage.out
+        flags: core
+        name: core-${{ matrix.go-version }}-mongo-${{ matrix.mongodb-version }}
+
+    - name: Upload coverage to Codecov (MongoDB)
+      uses: codecov/codecov-action@v4
+      with:
+        file: ./mongomiger/coverage.out
+        flags: mongomiger
+        name: mongomiger-${{ matrix.go-version }}-mongo-${{ matrix.mongodb-version }}
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.23'
+
+    - name: golangci-lint (Core)
+      uses: golangci/golangci-lint-action@v6
+      with:
+        version: latest
+        working-directory: core
+
+    - name: golangci-lint (MongoDB Plugin)
+      uses: golangci/golangci-lint-action@v6
+      with:
+        version: latest
+        working-directory: mongomiger
+
+    - name: golangci-lint (Examples)
+      uses: golangci/golangci-lint-action@v6
+      with:
+        version: latest
+        working-directory: examples
+
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.23'
+
+    - name: Run Gosec Security Scanner
+      uses: securecodewarrior/github-action-gosec@master
+      with:
+        args: '-fmt sarif -out gosec.sarif ./...'
+
+    - name: Upload SARIF file
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: gosec.sarif
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: [test, lint]
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.23'
+
+    - name: Build Core
+      run: cd core && go build ./...
+
+    - name: Build MongoDB Plugin
+      run: cd mongomiger && go build ./...
+
+    - name: Build Examples
+      run: cd examples && go build ./...
+
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    needs: [test, lint, build]
+    if: github.event_name == 'release'
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.23'
+
+    - name: Run GoReleaser
+      uses: goreleaser/goreleaser-action@v6
+      with:
+        distribution: goreleaser
+        version: '~> v2'
+        args: release --clean
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  dependency-review:
+    name: Dependency Review
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Dependency Review
+      uses: actions/dependency-review-action@v4

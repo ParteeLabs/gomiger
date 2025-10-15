@@ -1,0 +1,39 @@
+run:
+  timeout: 5m
+  go: '1.23'
+
+linters:
+  enable:
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - typecheck
+    - unused
+    - gofmt
+    - goimports
+    - misspell
+    - revive
+    - gosec
+    - bodyclose
+    - nilerr
+    - godox
+
+linters-settings:
+  gci:
+    local-prefixes: github.com/ParteeLabs/gomiger/core
+  godox:
+    keywords:
+      - NOTE
+      - OPTIMIZE
+      - HACK
+  govet:
+    check-shadowing: true
+
+issues:
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - gomnd
+        - funlen

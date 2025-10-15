@@ -24,6 +24,9 @@ type Mongomiger struct {
 // NewMongomiger creates a new Mongomiger plugin.
 func NewMongomiger(cfg *core.GomigerConfig) *Mongomiger {
 	return &Mongomiger{
+		BaseMigrator: &core.BaseMigrator{
+			Migrations: []core.Migration{},
+		},
 		uri:         cfg.URI,
 		schemaStore: cfg.SchemaStore,
 	}
