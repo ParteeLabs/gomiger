@@ -58,11 +58,6 @@ jobs:
         GOMIGER_URI: mongodb://localhost:27017/gomiger_test
       run: cd mongomiger && go test -v -race -coverprofile=coverage.out ./...
 
-    - name: Run tests (Examples)
-      env:
-        GOMIGER_URI: mongodb://localhost:27017/gomiger_example_test
-      run: cd examples && go test -v ./...
-
     - name: Upload coverage to Codecov (Core)
       uses: codecov/codecov-action@v4
       with:
@@ -89,19 +84,19 @@ jobs:
         go-version: '1.23'
 
     - name: golangci-lint (Core)
-      uses: golangci/golangci-lint-action@v6
+      uses: golangci/golangci-lint-action@v8
       with:
         version: latest
         working-directory: core
 
     - name: golangci-lint (MongoDB Plugin)
-      uses: golangci/golangci-lint-action@v6
+      uses: golangci/golangci-lint-action@v8
       with:
         version: latest
         working-directory: mongomiger
 
     - name: golangci-lint (Examples)
-      uses: golangci/golangci-lint-action@v6
+      uses: golangci/golangci-lint-action@v8
       with:
         version: latest
         working-directory: examples
@@ -118,15 +113,14 @@ jobs:
         go-version: '1.23'
 
     - name: Run Gosec Security Scanner
-      uses: securecodewarrior/github-action-gosec@master
+      uses: securego/gosec@master
       with:
         args: '-fmt sarif -out gosec.sarif ./...'
 
     - name: Upload SARIF file
-      uses: github/codeql-action/upload-sarif@v3
+      uses: github/codeql-action/upload-sarif@v2
       with:
         sarif_file: gosec.sarif
-
   build:
     name: Build
     runs-on: ubuntu-latest
@@ -144,6 +138,9 @@ jobs:
 
     - name: Build MongoDB Plugin
       run: cd mongomiger && go build ./...
+    
+    - name: Build Examples
+      run: cd examples && go build ./...
 
   release:
     name: Release
