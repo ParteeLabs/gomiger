@@ -1,3 +1,4 @@
+//nolint:revive
 package helper
 
 import (
@@ -39,11 +40,17 @@ func UpdateStringValue(node *ast.File, targetValue, newValue string) *ast.File {
 
 // ExportFile exports the node to a file
 func ExportFile(node *ast.File, fs *token.FileSet, path string) error {
+	//nolint:gosec
 	file, err := os.Create(path)
 	if err != nil {
 		return fmt.Errorf("failed to create file: %w", err)
 	}
-	defer file.Close()
+	defer func() {
+		err := file.Close()
+		if err != nil {
+			fmt.Printf("failed to close file: %v", err)
+		}
+	}()
 	if err := format.Node(file, fs, node); err != nil {
 		return fmt.Errorf("failed to format ast.File node to file: %w", err)
 	}

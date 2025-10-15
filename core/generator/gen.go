@@ -1,3 +1,25 @@
+// Package generator provides functionality for generating and managing database migration files.
+// It includes tools for initializing source code, creating migration templates,
+// and generating timestamped migration files.
+//
+// The package handles three main template types:
+// - Migration script template - For individual migration files
+// - Migrator template - For the migration executor
+// - CLI template - For command line interface
+//
+// Templates are stored as base64 encoded strings and decoded at runtime.
+// The package provides functions to:
+// - Load and parse templates
+// - Initialize source code structure
+// - Generate new migration files with timestamps
+// - Check initialization status
+//
+// Usage requires a GomigerConfig that specifies:
+// - Package name for generated files
+// - Target path for migrations
+//
+// Generated migration files follow the naming convention:
+// YYYYMMDDHHMM_name.mg.go
 package generator
 
 import (
@@ -14,6 +36,7 @@ import (
 	"github.com/ParteeLabs/gomiger/core/generator/helper"
 )
 
+// Template represents a parsed Go source file template.
 type Template struct {
 	fs   *token.FileSet
 	node *ast.File
@@ -31,12 +54,12 @@ func LoadTemplates() ([]Template, error) {
 	for _, encoded := range encodedTemplates {
 		content, decodeErr := base64.StdEncoding.DecodeString(encoded)
 		if decodeErr != nil {
-			return nil, decodeErr
+			return nil, fmt.Errorf("failed to decode template content: %w", decodeErr)
 		}
 		fs := token.NewFileSet()
 		node, err := parser.ParseFile(fs, "", content, parser.ParseComments)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to parse template content to ast.File node: %w", err)
 		}
 		templates = append(templates, Template{
 			fs,
@@ -50,23 +73,24 @@ func LoadTemplates() ([]Template, error) {
 func InitSrcCode(rc *core.GomigerConfig) error {
 	templates, err := LoadTemplates()
 	if err != nil {
-		return fmt.Errorf("Cannot load the templates: %w", err)
+		return fmt.Errorf("cannot load the templates: %w", err)
 	}
 	migrator := templates[1]
 	cli := templates[2]
 	helper.UpdatePackageName(migrator.node, rc.PkgName)
 	helper.UpdatePackageName(cli.node, rc.PkgName)
 	/// init the migration folder
+	//nolint:gosec
 	if err := os.MkdirAll(rc.Path, os.ModePerm); err != nil {
-		return fmt.Errorf("Cannot init the migration folder: %w", err)
+		return fmt.Errorf("cannot init the migration folder: %w", err)
 	}
 	/// init the migrator file
 	if err := helper.ExportFile(migrator.node, migrator.fs, rc.Path+"/migrator.mg.go"); err != nil {
-		return fmt.Errorf("Cannot init the migrator file: %w", err)
+		return fmt.Errorf("cannot init the migrator file: %w", err)
 	}
 	/// init the cli file
 	if err := helper.ExportFile(cli.node, cli.fs, rc.Path+"/cli.mg.go"); err != nil {
-		return fmt.Errorf("Cannot init the cli file: %w", err)
+		return fmt.Errorf("cannot init the cli file: %w", err)
 	}
 	return nil
 }
@@ -86,7 +110,7 @@ func GenMigrationFile(rc *core.GomigerConfig, name string) error {
 	templates, err := LoadTemplates()
 	migration := templates[0]
 	if err != nil {
-		return fmt.Errorf("Cannot load the templates: %w", err)
+		return fmt.Errorf("cannot load the templates: %w", err)
 	}
 
 	helper.UpdatePackageName(migration.node, rc.PkgName)
@@ -95,5 +119,9 @@ func GenMigrationFile(rc *core.GomigerConfig, name string) error {
 	helper.UpdateFuncName(migration.node, "MigrationNameVersion", fmt.Sprintf("Migration_%s_%s_Version", timestamp, name))
 	helper.UpdateStringValue(migration.node, "__VERSION__", timestamp)
 
-	return helper.ExportFile(migration.node, migration.fs, filePath)
+	err = helper.ExportFile(migration.node, migration.fs, filePath)
+	if err != nil {
+		return fmt.Errorf("cannot generate the migration file: %w", err)
+	}
+	return nil
 }

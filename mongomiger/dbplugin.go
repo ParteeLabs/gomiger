@@ -1,3 +1,5 @@
+// Package mongomiger provides MongoDB implementation of the Gomiger interface.
+// Extended from core.BaseMigrator.
 package mongomiger
 
 import (

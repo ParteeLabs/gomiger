@@ -1,3 +1,20 @@
+// Package main provides a generator script that creates the contents.mg.go file.
+// This file is responsible for embedding template files into the generator package.
+//
+// The script reads template files (migration, migrator, and CLI templates),
+// updates a skeleton file with the template contents encoded in base64,
+// and outputs the result as contents.mg.go.
+//
+// The generator modifies the package name of the skeleton file to "generator"
+// and replaces placeholder string literals with the actual template contents.
+//
+// Template files processed:
+//   - migration.mg.go: Template for migration scripts
+//   - migrator.mg.go: Template for the migrator implementation
+//   - cli.mg.go: Template for CLI interface
+//
+// The output file contents.mg.go is formatted according to Go standards
+// before being written to disk.
 package main
 
 import (
@@ -40,7 +57,7 @@ func main() {
 
 	/// Parse the skeleton then add the templates
 	fs := token.NewFileSet()
-	skeleton, err := parser.ParseFile(fs, "./core/generator/mg/skeleton.go", nil, parser.AllErrors)
+	skeleton, err := parser.ParseFile(fs, "./core/generator/mg/skeleton.go", nil, parser.ParseComments)
 	if err != nil {
 		fmt.Println("Error parsing template file migrator.mg.go:", err)
 		return
@@ -66,7 +83,12 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	defer libContentsFile.Close()
+	defer func() {
+		err := libContentsFile.Close()
+		if err != nil {
+			fmt.Printf("failed to close file: %v", err)
+		}
+	}()
 
 	if err := format.Node(libContentsFile, fs, skeleton); err != nil {
 		panic(err)

@@ -9,6 +9,7 @@ type Migrator struct {
 	// BaseMigrator doses not involve to any database. Use our plugins to connect to your database.
 	// Or override Connect, GetSchema, ApplyMigration, RevertMigration methods to implement with your database.
 	*core.BaseMigrator
+
 	// *mongomiger.Mongomiger
 	Config *core.GomigerConfig
 }

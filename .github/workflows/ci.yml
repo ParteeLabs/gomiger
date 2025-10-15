@@ -72,34 +72,34 @@ jobs:
         flags: mongomiger
         name: mongomiger-${{ matrix.go-version }}-mongo-${{ matrix.mongodb-version }}
 
+  detect-modules:
+      runs-on: ubuntu-latest
+      outputs:
+        modules: ${{ steps.set-modules.outputs.modules }}
+      steps:
+        - uses: actions/checkout@v4
+        - uses: actions/setup-go@v5
+          with:
+            go-version: ${{ env.GO_VERSION }}
+        - id: set-modules
+          run: echo "modules=$(go list -m -json | jq -s '.' | jq -c '[.[].Dir]')" >> $GITHUB_OUTPUT
+
   lint:
-    name: Lint
+    needs: detect-modules
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        modules: ${{ fromJSON(needs.detect-modules.outputs.modules) }}
     steps:
-    - uses: actions/checkout@v4
-
-    - name: Set up Go
-      uses: actions/setup-go@v5
-      with:
-        go-version: '1.23'
-
-    - name: golangci-lint (Core)
-      uses: golangci/golangci-lint-action@v8
-      with:
-        version: latest
-        working-directory: core
-
-    - name: golangci-lint (MongoDB Plugin)
-      uses: golangci/golangci-lint-action@v8
-      with:
-        version: latest
-        working-directory: mongomiger
-
-    - name: golangci-lint (Examples)
-      uses: golangci/golangci-lint-action@v8
-      with:
-        version: latest
-        working-directory: examples
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+      - name: golangci-lint ${{ matrix.modules }}
+        uses: golangci/golangci-lint-action@v8
+        with:
+          version: ${{ env.GOLANGCI_LINT_VERSION }}
+          working-directory: ${{ matrix.modules }}
 
   security:
     name: Security Scan

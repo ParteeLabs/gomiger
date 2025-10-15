@@ -113,20 +113,20 @@ func (b *BaseMigrator) Down(ctx context.Context, atVersion string) error {
 
 // Connect connects to the database.
 func (b *BaseMigrator) Connect(_ context.Context) error {
-	return errors.New("Not implemented")
+	return errors.New("not implemented")
 }
 
 // GetSchema returns the schema at a specific version.
 func (b *BaseMigrator) GetSchema(_ context.Context, _ string) (*Schema, error) {
-	return nil, errors.New("Not implemented")
+	return nil, errors.New("not implemented")
 }
 
 // ApplyMigration applies a migration.
 func (b *BaseMigrator) ApplyMigration(_ context.Context, _ Migration) error {
-	return errors.New("Not implemented")
+	return errors.New("not implemented")
 }
 
 // RevertMigration reverts a migration.
 func (b *BaseMigrator) RevertMigration(_ context.Context, _ Migration) error {
-	return errors.New("Not implemented")
+	return errors.New("not implemented")
 }
