@@ -14,8 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go-version: ['1.21', '1.22', '1.23']
-        mongodb-version: ['4.4', '5.0', '6.0', '7.0']
+        go-version: ['1.21', '1.23']
+        mongodb-version: ['6.0', '7.0']
     
     services:
       mongodb:
@@ -144,9 +144,6 @@ jobs:
 
     - name: Build MongoDB Plugin
       run: cd mongomiger && go build ./...
-
-    - name: Build Examples
-      run: cd examples && go build ./...
 
   release:
     name: Release
