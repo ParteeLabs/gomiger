@@ -1,0 +1,75 @@
+---
+name: Plugin Development Help
+about: Get help developing a new database plugin
+title: '[PLUGIN] '
+labels: ['plugin', 'help wanted', 'triage']
+assignees: ''
+---
+
+## 🔌 Plugin Information
+
+**Database/System**: [e.g. PostgreSQL, MySQL, Redis, etc.]
+
+**Plugin Name**: [e.g. postgresqlmiger, mysqlmiger]
+
+## 📋 Current Status
+
+**What have you implemented so far?**
+- [ ] Plugin structure setup
+- [ ] Connection management
+- [ ] Schema tracking
+- [ ] Migration application
+- [ ] Migration rollback
+- [ ] Testing
+- [ ] Documentation
+
+## ❓ Help Needed
+
+**What specific help do you need?**
+- [ ] Plugin architecture guidance
+- [ ] Interface implementation help
+- [ ] Testing strategies
+- [ ] Documentation examples
+- [ ] Code review
+- [ ] Other: ___________
+
+## 💻 Code
+
+**Current implementation** (if any):
+
+```go
+// Your plugin code here
+```
+
+**Specific questions or issues**:
+
+1. Question 1: ...
+2. Question 2: ...
+3. Question 3: ...
+
+## 🎯 Goals
+
+**What functionality are you trying to achieve?**
+- Goal 1: ...
+- Goal 2: ...
+- Goal 3: ...
+
+## 📚 Resources
+
+**Have you reviewed these resources?**
+- [ ] [Plugin Development Guide](../docs/plugin-development.md)
+- [ ] [MongoDB Plugin Source](../mongomiger/)
+- [ ] [Core Interface Documentation](https://pkg.go.dev/github.com/ParteeLabs/gomiger/core)
+- [ ] Existing plugin examples
+
+## 🤝 Collaboration
+
+**Are you interested in:**
+- [ ] Maintaining this plugin long-term
+- [ ] Contributing it to the main repository
+- [ ] Creating a separate repository
+- [ ] Getting help from maintainers
+
+## 📝 Additional Context
+
+Any other context, database-specific considerations, or questions about plugin development.

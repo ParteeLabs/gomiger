@@ -1,0 +1,81 @@
+---
+name: Feature Request
+about: Suggest an idea for this project
+title: '[FEATURE] '
+labels: ['enhancement', 'triage']
+assignees: ''
+---
+
+## 🚀 Feature Description
+
+A clear and concise description of the feature you'd like to see.
+
+## 💡 Motivation
+
+**Is your feature request related to a problem? Please describe.**
+A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+
+**Why is this feature important?**
+Explain how this feature would benefit users of Gomiger.
+
+## 📋 Detailed Description
+
+**Describe the solution you'd like**
+A clear and concise description of what you want to happen.
+
+**Describe alternatives you've considered**
+A clear and concise description of any alternative solutions or features you've considered.
+
+## 🎯 Use Cases
+
+Describe specific use cases where this feature would be helpful:
+
+1. Use case 1: ...
+2. Use case 2: ...
+3. Use case 3: ...
+
+## 💻 API Design (if applicable)
+
+If this feature involves new APIs, describe how you envision them working:
+
+```go
+// Example API usage
+migrator := gomiger.New(config)
+migrator.SomeNewMethod(params)
+```
+
+## 🔧 Implementation Ideas
+
+Do you have ideas on how this feature could be implemented? (Optional)
+
+- Implementation approach 1
+- Implementation approach 2
+- Considerations for backward compatibility
+
+## 📸 Mockups/Diagrams
+
+If applicable, add mockups, diagrams, or examples to help explain your feature request.
+
+## 🌍 Affected Components
+
+Which parts of Gomiger would this feature affect?
+
+- [ ] Core engine
+- [ ] MongoDB plugin
+- [ ] CLI tools
+- [ ] Documentation
+- [ ] Testing framework
+- [ ] Other: ___________
+
+## 🎯 Priority
+
+How important is this feature to you?
+
+- [ ] Critical - Blocking my project
+- [ ] High - Would significantly improve my workflow
+- [ ] Medium - Would be nice to have
+- [ ] Low - Just an idea
+
+## 📝 Additional Context
+
+Add any other context, links, or resources about the feature request here.
