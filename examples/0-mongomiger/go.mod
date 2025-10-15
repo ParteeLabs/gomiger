@@ -1,12 +1,12 @@
-module github.com/ParteeLabs/gomiger/examples
+module github.com/ParteeLabs/gomiger/examples/0-mongominger
 
-go 1.23.3
+go 1.25.1
 
 require (
-	github.com/ParteeLabs/gomiger/core v0.0.0-20250509043851-fb4257e247bd
-	github.com/ParteeLabs/gomiger/mongomiger v0.0.0-20250509043851-fb4257e247bd
-	github.com/urfave/cli/v3 v3.3.2
-	go.mongodb.org/mongo-driver/v2 v2.2.0
+	github.com/ParteeLabs/gomiger/core v0.0.0-20251015102356-be2ac08da808
+	github.com/ParteeLabs/gomiger/mongomiger v0.0.0-20251015102356-be2ac08da808
+	github.com/urfave/cli/v3 v3.4.1
+	go.mongodb.org/mongo-driver/v2 v2.3.1
 )
 
 require (

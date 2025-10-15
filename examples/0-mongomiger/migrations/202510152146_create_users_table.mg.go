@@ -1,4 +1,4 @@
-package mgr
+package migrations
 
 import (
 	"context"
@@ -7,7 +7,9 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
-func (m *Migrator) Migration_202505101419_users_Up(ctx context.Context) error {
+//nolint:godoclint,revive
+func (m *Migrator) Migration_202510152146_create_users_table_Up(ctx context.Context) error {
+	// Create users collection with validation
 	validator := bson.M{
 		"$jsonSchema": bson.M{
 			"bsonType": "object",
@@ -33,11 +35,14 @@ func (m *Migrator) Migration_202505101419_users_Up(ctx context.Context) error {
 	return m.Db.CreateCollection(ctx, "users", opts)
 }
 
-func (m *Migrator) Migration_202505101419_users_Down(ctx context.Context) error {
+//nolint:godoclint,revive
+func (m *Migrator) Migration_202510152146_create_users_table_Down(ctx context.Context) error {
 	return m.Db.Collection("users").Drop(ctx)
 }
 
 // AUTO GENERATED, DO NOT MODIFY!
-func (m *Migrator) Migration_202505101419_users_Version() string {
-	return "202505101419"
+//
+//nolint:godoclint
+func (m *Migrator) Migration_202510152146_create_users_table_Version() string {
+	return "202510152146"
 }

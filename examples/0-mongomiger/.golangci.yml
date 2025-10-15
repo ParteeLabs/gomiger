@@ -1,0 +1,50 @@
+version: '2'
+
+linters:
+  enable:
+    # Essential linters for code quality and safety
+    - errcheck # Check for unchecked errors (critical for migrations)
+    - gosec # Security vulnerabilities
+    - staticcheck # Static analysis
+    - govet # Go vet issues
+    - revive # Go best practices (replaces golint)
+    - godoclint # Documentation standards
+    - musttag # Struct tag validation
+    - wrapcheck # Error wrapping
+
+  disable:
+    # Overly strict linters for CLI/migration tools
+    - exhaustruct # Requires all struct fields (impractical for CLI structs)
+    - gochecknoglobals # Global variables (common in CLI tools)
+    - forbidigo # Bans fmt.Print* (needed for CLI output)
+    - varnamelen # Short variable names (Go convention: rc, fs, etc.)
+    - wsl # Whitespace linting (too prescriptive)
+    - wsl_v5 # Updated wsl (still overly strict)
+    - tagalign # Tag alignment (cosmetic only)
+    - tagliatelle # Tag naming (can conflict with external APIs)
+    - godot # Comment punctuation (too pedantic)
+    - nlreturn # Newlines before returns (stylistic)
+    - noinlineerr # Inline error handling (standard Go idiom)
+    - perfsprint # Printf micro-optimizations
+    - ireturn # Interface returns (valid design pattern)
+    - funcorder # Function ordering (not functionally important)
+    - cyclop # Cyclomatic complexity (can be overly strict)
+    - depguard # Dependency restrictions (too restrictive)
+    - err113 # Specific error types (too pedantic)
+
+run:
+  timeout: 5m
+  tests: false
+  allow-parallel-runners: true
+  allow-serial-runners: true
+  go: '1.23'
+  concurrency: 4
+
+linters-settings:
+  revive:
+    # Configure revive to be less strict on some rules
+    rules:
+      - name: package-comments
+        disabled: true # Allow packages without comments for small internal packages
+      - name: exported
+        arguments: [checkPrivateReceivers, disableStutteringCheck]

@@ -36,7 +36,7 @@ go get github.com/ParteeLabs/gomiger/mongomiger
 
 ```bash
 mkdir my-app && cd my-app
-go mod init my-app
+go mod init github.com/my-app
 ```
 
 ### 2. Create Configuration File
@@ -96,7 +96,7 @@ Create `main.go`:
 package main
 
 import (
-	"my-app/migrations"
+	"github.com/my-app/migrations"
 )
 
 func main() {

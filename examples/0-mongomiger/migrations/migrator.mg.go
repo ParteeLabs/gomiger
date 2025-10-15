@@ -1,4 +1,4 @@
-package mgr
+package migrations
 
 import (
 	"github.com/ParteeLabs/gomiger/core"
@@ -8,6 +8,7 @@ import (
 // Migrator is the main migrator struct.
 type Migrator struct {
 	*mongomiger.Mongomiger
+
 	Config *core.GomigerConfig
 }
 
@@ -15,12 +16,13 @@ type Migrator struct {
 func NewMigrator(config *core.GomigerConfig) core.Gomiger {
 	m := &Migrator{
 		Mongomiger: mongomiger.NewMongomiger(config),
-		Config:     config,
+
+		Config: config,
 	}
 
 	// ** Add your migrations here **
 	m.Migrations = []core.Migration{
-		// {Version: "1.0.0", Up: m.MigrationNameUp, Down: m.MigrationNameDown},
+		// {Version: MigrationNameVersion(), Up: m.MigrationNameUp, Down: m.MigrationNameDown},
 	}
 	return m
 }

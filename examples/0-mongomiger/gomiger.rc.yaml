@@ -1,0 +1,3 @@
+path: './migrations'
+pkg_name: 'migrations'
+schema_store: 'schema_migrations'
