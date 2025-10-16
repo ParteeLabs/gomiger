@@ -1,7 +1,7 @@
 # 🚀 Gomiger
 
 [![CI/CD Pipeline](https://github.com/ParteeLabs/gomiger/actions/workflows/ci.yml/badge.svg)](https://github.com/ParteeLabs/gomiger/actions/workflows/ci.yml)
-[![Go Report Card](https://goreportcard.com/badge/github.com/ParteeLabs/gomiger)](https://goreportcard.com/report/github.com/ParteeLabs/gomiger)
+[![Go Report Card](https://goreportcard.com/badge/github.com/ParteeLabs/gomiger/core)](https://goreportcard.com/report/github.com/ParteeLabs/gomiger/core)
 [![Coverage Status](https://codecov.io/gh/ParteeLabs/gomiger/branch/main/graph/badge.svg)](https://codecov.io/gh/ParteeLabs/gomiger)
 [![Go Reference](https://pkg.go.dev/badge/github.com/ParteeLabs/gomiger.svg)](https://pkg.go.dev/github.com/ParteeLabs/gomiger)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
