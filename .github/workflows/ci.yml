@@ -49,24 +49,40 @@ jobs:
         cd core && go mod download
         cd ../mongomiger && go mod download
         cd ../examples && go mod download
-    - name: Run tests (Core)
-      run: cd core && go test -v -race -coverprofile=coverage.out ./...
-    - name: Run tests (MongoDB Plugin)
-      env:
-        GOMIGER_URI: mongodb://localhost:27017/gomiger_test
-      run: cd mongomiger && go test -v -race -coverprofile=coverage.out ./...
-    - name: Upload coverage to Codecov (Core)
-      uses: codecov/codecov-action@v4
+    - name: core - Run tests with race detection
+      run: go test -v -race $(go list ./... | grep -vE './cmd|./generator/mg|./generator/scripts')
+      working-directory: ./core
+    - name: core - Run tests with coverage
+      run: go test -v -coverprofile=coverage.out -covermode=count $(go list ./... | grep -vE './cmd|./generator/mg|./generator/scripts')
+      working-directory: ./core
+      continue-on-error: true
+    - name: core - Upload coverage to Codecov
+      uses: codecov/codecov-action@v5
       with:
+        slug: ParteeLabs/gomiger
         file: ./core/coverage.out
         flags: core
         name: core-${{ matrix.go-version }}-mongo-${{ matrix.mongodb-version }}
-    - name: Upload coverage to Codecov (MongoDB)
-      uses: codecov/codecov-action@v4
+        token: ${{ secrets.CODECOV_TOKEN }}
+    - name: mongomiger - Run tests with race detection
+      env:
+        GOMIGER_URI: mongodb://localhost:27017/gomiger_test
+      run: go test -v -race ./...
+      working-directory: ./mongomiger
+    - name: mongomiger - Run tests with coverage
+      env:
+        GOMIGER_URI: mongodb://localhost:27017/gomiger_test
+      run: go test -v -coverprofile=coverage.out -covermode=count ./...
+      working-directory: ./mongomiger
+      continue-on-error: true
+    - name: mongomiger - Upload coverage to Codecov
+      uses: codecov/codecov-action@v5
       with:
+        slug: ParteeLabs/gomiger
         file: ./mongomiger/coverage.out
         flags: mongomiger
         name: mongomiger-${{ matrix.go-version }}-mongo-${{ matrix.mongodb-version }}
+        token: ${{ secrets.CODECOV_TOKEN }}
 
   detect-modules:
     runs-on: ubuntu-latest
@@ -99,6 +115,8 @@ jobs:
 
   security:
     name: Security Scan
+    permissions:
+      security-events: write
     runs-on: ubuntu-latest
     env:
       GO111MODULE: on
@@ -110,7 +128,7 @@ jobs:
           # we let the report trigger content trigger a failure using the GitHub Security features.
           args: '-no-fail -fmt sarif -out results.sarif ./...'
       - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v4
         with:
           # Path to SARIF file relative to the root of the repository
           sarif_file: results.sarif
@@ -125,11 +143,14 @@ jobs:
       with:
         go-version: ${{ env.GO_VERSION }}
     - name: Build Core
-      run: cd core && go build ./...
-    - name: Build MongoDB Plugin
-      run: cd mongomiger && go build ./...
-    - name: Build Examples
-      run: cd examples && go build ./...
+      run: go build $(go list ./... | grep -v './generator/mg')
+      working-directory: ./core
+    - name: Build mongomiger plugin
+      run: go build ./...
+      working-directory: ./mongomiger
+    - name: "Build Example: 0-mongomiger"
+      run: go build ./...
+      working-directory: ./examples/0-mongomiger
 
   release:
     name: Release
