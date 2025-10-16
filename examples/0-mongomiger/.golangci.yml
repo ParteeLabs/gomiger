@@ -32,6 +32,15 @@ linters:
     - depguard # Dependency restrictions (too restrictive)
     - err113 # Specific error types (too pedantic)
 
+  settings:
+    revive:
+      rules:
+        - name: package-comments
+          disabled: true
+    godoclint:
+      disable:
+        - pkg-doc
+
 run:
   timeout: 5m
   tests: false

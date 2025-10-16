@@ -7,7 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
-//nolint:godoclint,revive
+//nolint:godoclint,revive,wrapcheck
 func (m *Migrator) Migration_202510152146_create_users_table_Up(ctx context.Context) error {
 	// Create users collection with validation
 	validator := bson.M{
@@ -35,7 +35,7 @@ func (m *Migrator) Migration_202510152146_create_users_table_Up(ctx context.Cont
 	return m.Db.CreateCollection(ctx, "users", opts)
 }
 
-//nolint:godoclint,revive
+//nolint:godoclint,revive,wrapcheck
 func (m *Migrator) Migration_202510152146_create_users_table_Down(ctx context.Context) error {
 	return m.Db.Collection("users").Drop(ctx)
 }
