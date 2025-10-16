@@ -318,6 +318,7 @@ func TestUserMigration(t *testing.T) {
 - [Getting Started Guide](docs/getting-started.md)
 - [Plugin Development](docs/plugin-development.md)
 - [Best Practices](docs/best-practices.md)
+- [Project Roadmap](ROADMAP.md) 🗺️
 - [API Reference](https://pkg.go.dev/github.com/ParteeLabs/gomiger)
 - [Examples Repository](examples/)
 

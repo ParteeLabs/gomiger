@@ -1,0 +1,113 @@
+name: 🗺️ Roadmap Item
+description: Suggest a new feature or improvement for the Gomiger roadmap
+title: '[ROADMAP] '
+labels: ['roadmap', 'enhancement']
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a roadmap item! This helps us plan the future of Gomiger.
+
+        Please check our [current roadmap](https://github.com/ParteeLabs/gomiger/blob/main/ROADMAP.md) first to see if your suggestion is already planned.
+
+  - type: dropdown
+    id: version
+    attributes:
+      label: Target Version
+      description: Which version should this feature be considered for?
+      options:
+        - 'v1.0 (Stable Release)'
+        - 'v2.0 (Advanced Features)'
+        - 'Not sure / Let maintainers decide'
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Feature Category
+      description: What category does this roadmap item belong to?
+      options:
+        - 'Database Plugin'
+        - 'Core Engine'
+        - 'CLI/Developer Experience'
+        - 'Testing/Quality'
+        - 'Documentation'
+        - 'Enterprise Features'
+        - 'Community/Ecosystem'
+        - 'Performance'
+        - 'Security'
+        - 'Other'
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Feature Description
+      description: Describe the feature or improvement you'd like to see
+      placeholder: 'A clear and concise description of what you want to happen...'
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation and Use Case
+      description: Why is this feature needed? What problem does it solve?
+      placeholder: 'Explain the problem this feature would solve and who would benefit...'
+    validations:
+      required: true
+
+  - type: textarea
+    id: implementation
+    attributes:
+      label: Implementation Ideas (Optional)
+      description: Any ideas on how this could be implemented?
+      placeholder: 'Technical approaches, API designs, or implementation suggestions...'
+    validations:
+      required: false
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Suggested Priority
+      description: How important do you think this feature is?
+      options:
+        - 'Critical (blocking adoption)'
+        - 'High (important for adoption)'
+        - 'Medium (nice to have)'
+        - 'Low (future consideration)'
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Are there any alternative solutions or workarounds?
+      placeholder: "Describe any alternative solutions or features you've considered..."
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      description: Would you be willing to contribute to this feature?
+      options:
+        - label: "I'd be willing to implement this feature"
+        - label: "I'd be willing to help with design/planning"
+        - label: "I'd be willing to help with testing"
+        - label: "I'd be willing to help with documentation"
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Add any other context, screenshots, or examples
+      placeholder: 'Any additional information that might be helpful...'
+    validations:
+      required: false

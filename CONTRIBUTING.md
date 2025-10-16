@@ -395,7 +395,13 @@ What actually happens
 
 ### Feature Requests
 
-Use the feature request template:
+For new feature ideas:
+
+1. **Check the [Roadmap](ROADMAP.md)** - Your idea might already be planned!
+2. **Use the appropriate template**:
+   - For roadmap items: Use the "🗺️ Roadmap Item" template
+   - For immediate features: Use the "💡 Feature Request" template
+3. **Start a Discussion** for complex features before opening an issue
 
 ```markdown
 ## Feature Description
