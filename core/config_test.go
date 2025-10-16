@@ -52,7 +52,7 @@ schema_store: 'test_schemas'`
 			t.Error("Expected error for nonexistent file")
 		}
 
-		if !strings.Contains(err.Error(), "Cannot read the gomiger.rc file") {
+		if !strings.Contains(err.Error(), "cannot read the gomiger.rc file") {
 			t.Errorf("Expected specific error message, got: %s", err.Error())
 		}
 	})
