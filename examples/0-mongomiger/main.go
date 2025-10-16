@@ -1,6 +1,6 @@
 package main
 
-import "github.com/ParteeLabs/gomiger/examples/0-mongominger/migrations"
+import "example.com/my-app/migrations"
 
 func main() {
 	migrations.Run()

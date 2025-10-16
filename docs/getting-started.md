@@ -36,7 +36,7 @@ go get github.com/ParteeLabs/gomiger/mongomiger
 
 ```bash
 mkdir my-app && cd my-app
-go mod init github.com/my-app
+go mod init example.com/my-app
 ```
 
 ### 2. Create Configuration File

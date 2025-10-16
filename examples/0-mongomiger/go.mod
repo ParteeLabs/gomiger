@@ -1,4 +1,4 @@
-module github.com/ParteeLabs/gomiger/examples/0-mongominger
+module example.com/my-app
 
 go 1.25.1
 
