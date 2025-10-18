@@ -25,8 +25,6 @@ This document outlines the planned development path for Gomiger, a powerful Go m
 - Limited configuration
 - No migration dependency management
 
----
-
 ## 🎯 Version 1.0 (Stable Release) - Target: Q3 2025
 
 ### 🚀 Major Features
@@ -34,21 +32,8 @@ This document outlines the planned development path for Gomiger, a powerful Go m
 #### Database Plugin Ecosystem
 
 - [ ] **PostgreSQL Plugin** (High Priority)
-
-  - Full CRUD operations support
-  - Schema migration utilities
-  - Connection pooling integration
-  - Transaction support for rollbacks
-
 - [ ] **MySQL Plugin**
-
-  - Complete SQL operations
-  - Migration state tracking
-  - Foreign key constraint handling
-
 - [ ] **SQLite Plugin**
-  - Embedded database support
-  - File-based migrations for development
 
 #### Enhanced Core Features
 
@@ -63,10 +48,8 @@ This document outlines the planned development path for Gomiger, a powerful Go m
   - Migration locking mechanism
   - Concurrent execution protection
   - Dirty state recovery procedures
-  - Migration checksum validation
 
 - [ ] **Enhanced CLI**
-  - Interactive migration creation wizard
   - Migration status visualization
   - Dry-run mode for testing
   - Migration history and logs
@@ -98,11 +81,9 @@ This document outlines the planned development path for Gomiger, a powerful Go m
   - Migration execution metrics
   - Logging improvements with structured logs
 
----
-
 ## 🚀 Version 2.0 (Advanced Features) - Target: Q1 2026
 
----
+_Haven't decided yet, it's up to you, come & draw the next version of **Gomiger**._
 
 ## 🤝 Community Roadmap
 
@@ -111,8 +92,6 @@ This document outlines the planned development path for Gomiger, a powerful Go m
 - [ ] **10+ Contributors** by end of 2025
 - [ ] **1000+ GitHub Stars** by Q4 2025
 - [ ] **5+ Community Plugins** by 2026
-
----
 
 ## 📊 Success Metrics
 
@@ -130,8 +109,6 @@ This document outlines the planned development path for Gomiger, a powerful Go m
 - **Plugin Ecosystem**: 10+ database plugins available
 - **Community**: 100+ active community members
 
----
-
 ## 🔄 Review and Updates
 
 This roadmap will be reviewed and updated quarterly based on:
@@ -143,8 +120,6 @@ This roadmap will be reviewed and updated quarterly based on:
 
 **Last Updated**: October 2025
 **Next Review**: January 2026
-
----
 
 ## 📞 Get Involved
 
