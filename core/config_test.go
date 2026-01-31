@@ -8,27 +8,39 @@ import (
 	"testing"
 )
 
-func TestGomigerConfig(t *testing.T) {
-	t.Run("ParseYAML with valid config", func(t *testing.T) {
-		// Create a temporary config file
-		configContent := `path: './test-migrations'
+var validConfigContent = `path: './test-migrations'
 pkg_name: 'testmgr'
 schema_store: 'test_schemas'`
 
-		tempFile, err := os.CreateTemp("", "gomiger-test-*.yaml")
-		if err != nil {
-			t.Fatalf("Failed to create temp file: %v", err)
-		}
-		defer os.Remove(tempFile.Name())
+var invalidConfigContent = `
+path: './test-migrations'
+pkg_name: 'testmgr'
+schema_store: 'test_schemas'
+	invalid_indentation
+missing_colon_value
+`
 
-		if _, err := tempFile.WriteString(configContent); err != nil {
-			t.Fatalf("Failed to write to temp file: %v", err)
-		}
-		tempFile.Close()
+func createTempConfigFile(t *testing.T, content string) (string, func()) {
+	tempFile, err := os.CreateTemp("", "gomiger-test-*.yaml")
+	if err != nil {
+		t.Fatalf("Failed to create temp file: %v", err)
+	}
+	if _, err := tempFile.WriteString(content); err != nil {
+		t.Fatalf("Failed to write to temp file: %v", err)
+		os.Remove(tempFile.Name())
+	}
+	tempFile.Close()
+	return tempFile.Name(), func() {
+		os.Remove(tempFile.Name())
+	}
+}
 
+func TestGomigerConfig(t *testing.T) {
+	t.Run("ParseYAML with valid config", func(t *testing.T) {
+		tempFile, cleanup := createTempConfigFile(t, validConfigContent)
+		defer cleanup()
 		config := &GomigerConfig{}
-		err = config.ParseYAML(tempFile.Name())
-		if err != nil {
+		if err := config.ParseYAML(tempFile); err != nil {
 			t.Errorf("Expected no error, got: %v", err)
 		}
 
@@ -42,6 +54,32 @@ schema_store: 'test_schemas'`
 
 		if config.SchemaStore != "test_schemas" {
 			t.Errorf("Expected schema_store 'test_schemas', got: %s", config.SchemaStore)
+		}
+	})
+
+	t.Run("ParseYAML with empty file path", func(t *testing.T) {
+		if err := os.WriteFile("gomiger.rc.yaml", []byte(validConfigContent), 0644); err != nil {
+			t.Fatalf("Failed to write default config file: %v", err)
+		}
+		defer os.Remove("gomiger.rc.yaml")
+
+		config := &GomigerConfig{}
+		if err := config.ParseYAML(""); err != nil {
+			t.Errorf("Expected no error, got: %v", err)
+		}
+	})
+
+	t.Run("ParseYAML with invalid config", func(t *testing.T) {
+		tempFile, cleanup := createTempConfigFile(t, invalidConfigContent)
+		defer cleanup()
+		config := &GomigerConfig{}
+		err := config.ParseYAML(tempFile)
+		if err == nil {
+			t.Error("Expected error for invalid config")
+		}
+
+		if !strings.Contains(err.Error(), "cannot parse the gomiger.rc file") {
+			t.Errorf("Expected specific error message, got: %s", err.Error())
 		}
 	})
 
@@ -88,33 +126,33 @@ schema_store: 'test_schemas'`
 	})
 
 	t.Run("GetGomigerRC with URI from environment", func(t *testing.T) {
-		// Create a temporary config file
-		configContent := `path: './test-migrations'
-pkg_name: 'testmgr'
-schema_store: 'test_schemas'`
-
-		tempFile, err := os.CreateTemp("", "gomiger-test-*.yaml")
-		if err != nil {
-			t.Fatalf("Failed to create temp file: %v", err)
-		}
-		defer os.Remove(tempFile.Name())
-
-		if _, err := tempFile.WriteString(configContent); err != nil {
-			t.Fatalf("Failed to write to temp file: %v", err)
-		}
-		tempFile.Close()
-
+		tempFile, cleanup := createTempConfigFile(t, validConfigContent)
+		defer cleanup()
 		// Set environment variable
 		os.Setenv("GOMIGER_URI", "mongodb://localhost:27017/test")
 		defer os.Unsetenv("GOMIGER_URI")
 
-		config, err := GetGomigerRC(tempFile.Name())
+		config, err := GetGomigerRC(tempFile)
 		if err != nil {
 			t.Errorf("Expected no error, got: %v", err)
 		}
 
 		if config.URI != "mongodb://localhost:27017/test" {
 			t.Errorf("Expected URI from environment, got: %s", config.URI)
+		}
+	})
+
+	t.Run("GetGomigerRC with invalid config file", func(t *testing.T) {
+		tempFile, cleanup := createTempConfigFile(t, invalidConfigContent)
+		defer cleanup()
+
+		_, err := GetGomigerRC(tempFile)
+		if err == nil {
+			t.Error("Expected error for invalid config file")
+		}
+
+		if !strings.Contains(err.Error(), "cannot parse the gomiger.rc file") {
+			t.Errorf("Expected specific error message, got: %s", err.Error())
 		}
 	})
 }

@@ -1,3 +1,5 @@
+//go:build ignore
+
 // Package main provides a generator script that creates the contents.mg.go file.
 // This file is responsible for embedding template files into the generator package.
 //
