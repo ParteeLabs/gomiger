@@ -5,6 +5,7 @@ package mongomiger
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/ParteeLabs/gomiger/core"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -37,7 +38,7 @@ func NewMongomiger(cfg *core.GomigerConfig) *Mongomiger {
 }
 
 // Connect implements core.DbPlugin.
-func (m *Mongomiger) Connect(_ context.Context) (err error) {
+func (m *Mongomiger) Connect(ctx context.Context) (err error) {
 	// Parse the connection string to get the database name.
 	connStr, err := connstring.Parse(m.uri)
 	if err != nil {
@@ -49,20 +50,28 @@ func (m *Mongomiger) Connect(_ context.Context) (err error) {
 	}
 	m.Db = m.Client.Database(connStr.Database)
 	m.schemaCollection = m.Db.Collection(m.schemaStore)
+	_, err = m.schemaCollection.Indexes().CreateOne(ctx, mongo.IndexModel{
+		Keys:    bson.M{"version": 1},
+		Options: options.Index().SetUnique(true),
+	})
 	return
 }
 
 // GetSchema implements core.DbPlugin.
-func (m *Mongomiger) GetSchema(ctx context.Context, version string) (schema *core.Schema, err error) {
-	err = m.schemaCollection.FindOne(ctx, bson.M{"version": version}).Decode(&schema)
-	if err != nil {
+func (m *Mongomiger) GetSchema(ctx context.Context, version string) (*core.Schema, error) {
+	schema := &core.Schema{}
+	if err := m.schemaCollection.FindOne(ctx, bson.M{"version": version}).Decode(schema); err != nil {
 		return nil, fmt.Errorf("failed to get schema: %w", err)
 	}
-	return
+	return schema, nil
 }
 
 func (m *Mongomiger) updateSchemaStatus(ctx context.Context, mi core.Migration, status core.SchemaStatus) error {
-	if _, err := m.schemaCollection.UpdateOne(ctx, bson.M{"version": mi.Version}, bson.M{"status": status}); err != nil {
+	if _, err := m.schemaCollection.UpdateOne(
+		ctx,
+		bson.M{"version": mi.Version},
+		bson.M{"$set": bson.M{"status": status}},
+	); err != nil {
 		return fmt.Errorf("failed to update schema status at version: %s, please manually update it with '%s' then try again, Error: %w", mi.Version, status, err)
 	}
 	return nil
@@ -71,7 +80,12 @@ func (m *Mongomiger) updateSchemaStatus(ctx context.Context, mi core.Migration, 
 // ApplyMigration implements core.DbPlugin.
 func (m *Mongomiger) ApplyMigration(ctx context.Context, mi core.Migration) error {
 	// Mark the migration as in progress (create a new schema).
-	if _, err := m.schemaCollection.InsertOne(ctx, bson.M{"status": core.InProgress}); err != nil {
+	schema := &core.Schema{
+		Version:   mi.Version,
+		Status:    core.InProgress,
+		Timestamp: time.Now(),
+	}
+	if _, err := m.schemaCollection.InsertOne(ctx, schema); err != nil {
 		return fmt.Errorf("failed to apply migration at version: %s, Error: %w", mi.Version, err)
 	}
 	// Run the migration.
@@ -96,7 +110,7 @@ func (m *Mongomiger) RevertMigration(ctx context.Context, mi core.Migration) err
 		if err := m.updateSchemaStatus(ctx, mi, core.Dirty); err != nil {
 			return err
 		}
-		return fmt.Errorf("failed to apply migration %s: %w", mi.Version, err)
+		return fmt.Errorf("failed to revert migration %s: %w", mi.Version, err)
 	}
 	// Delete the schema.
 	if _, err := m.schemaCollection.DeleteOne(ctx, bson.M{"version": mi.Version}); err != nil {
