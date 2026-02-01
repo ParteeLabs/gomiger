@@ -2,15 +2,25 @@ package core
 
 import (
 	"context"
-	"errors"
 	"fmt"
 )
+
+// BaseMigratorAbstractMethods defines the methods that must be implemented by a concrete migrator.
+type BaseMigratorAbstractMethods interface {
+	Connect(ctx context.Context) error
+	GetSchema(ctx context.Context, version string) (*Schema, error)
+	ApplyMigration(ctx context.Context, mi Migration) error
+	RevertMigration(ctx context.Context, mi Migration) error
+}
 
 // BaseMigrator is the base migrator for controlling flow.
 // It does not connect or execute to any database.
 type BaseMigrator struct {
+	BaseMigratorAbstractMethods
 	Migrations []Migration
 }
+
+var _ Gomiger = (*BaseMigrator)(nil)
 
 func (b *BaseMigrator) isVersionExists(version string) bool {
 	for _, mi := range b.Migrations {
@@ -69,24 +79,4 @@ func (b *BaseMigrator) Down(ctx context.Context, atVersion string) error {
 		}
 	}
 	return nil
-}
-
-// Connect connects to the database.
-func (b *BaseMigrator) Connect(_ context.Context) error {
-	return errors.New("not implemented")
-}
-
-// GetSchema returns the schema at a specific version.
-func (b *BaseMigrator) GetSchema(_ context.Context, _ string) (*Schema, error) {
-	return nil, errors.New("not implemented")
-}
-
-// ApplyMigration applies a migration.
-func (b *BaseMigrator) ApplyMigration(_ context.Context, _ Migration) error {
-	return errors.New("not implemented")
-}
-
-// RevertMigration reverts a migration.
-func (b *BaseMigrator) RevertMigration(_ context.Context, _ Migration) error {
-	return errors.New("not implemented")
 }

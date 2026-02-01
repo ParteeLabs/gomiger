@@ -25,13 +25,15 @@ type Mongomiger struct {
 
 // NewMongomiger creates a new Mongomiger plugin.
 func NewMongomiger(cfg *core.GomigerConfig) *Mongomiger {
-	return &Mongomiger{
+	mongomiger := &Mongomiger{
 		BaseMigrator: &core.BaseMigrator{
 			Migrations: []core.Migration{},
 		},
 		uri:         cfg.URI,
 		schemaStore: cfg.SchemaStore,
 	}
+	mongomiger.BaseMigratorAbstractMethods = mongomiger
+	return mongomiger
 }
 
 // Connect implements core.DbPlugin.
@@ -101,8 +103,4 @@ func (m *Mongomiger) RevertMigration(ctx context.Context, mi core.Migration) err
 		return fmt.Errorf("failed to delete schema at version: %s, please manually delete it, Error: %w", mi.Version, err)
 	}
 	return nil
-
 }
-
-// Interface check
-var _ core.Gomiger = (*Mongomiger)(nil)
