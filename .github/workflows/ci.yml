@@ -2,9 +2,9 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main ]
+    branches: [main]
   release:
     types: [published]
 
@@ -18,9 +18,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go-version: ['1.23']
-        mongodb-version: ['6.0', '7.0']
-    
+        go-version: ["1.23"]
+        mongodb-version: ["6.0", "7.0"]
+
     services:
       mongodb:
         image: mongo:${{ matrix.mongodb-version }}
@@ -33,56 +33,56 @@ jobs:
           --health-retries 5
 
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-go@v5
-      with:
-        go-version: ${{ matrix.go-version }}
-    - name: Cache Go modules
-      uses: actions/cache@v4
-      with:
-        path: ~/go/pkg/mod
-        key: ${{ runner.os }}-go-${{ matrix.go-version }}-${{ hashFiles('**/go.sum') }}
-        restore-keys: |
-          ${{ runner.os }}-go-${{ matrix.go-version }}-
-    - name: Download dependencies
-      run: |
-        cd core && go mod download
-        cd ../mongomiger && go mod download
-        cd ../examples && go mod download
-    - name: core - Run tests with race detection
-      run: go test -v -race $(go list ./... | grep -vE './cmd|./generator/mg|./generator/scripts')
-      working-directory: ./core
-    - name: core - Run tests with coverage
-      run: go test -v -coverprofile=coverage.out -covermode=count $(go list ./... | grep -vE './cmd|./generator/mg|./generator/scripts')
-      working-directory: ./core
-      continue-on-error: true
-    - name: core - Upload coverage to Codecov
-      uses: codecov/codecov-action@v5
-      with:
-        slug: ParteeLabs/gomiger
-        file: ./core/coverage.out
-        flags: core
-        name: core-${{ matrix.go-version }}-mongo-${{ matrix.mongodb-version }}
-        token: ${{ secrets.CODECOV_TOKEN }}
-    - name: mongomiger - Run tests with race detection
-      env:
-        GOMIGER_URI: mongodb://localhost:27017/gomiger_test
-      run: go test -v -race ./...
-      working-directory: ./mongomiger
-    - name: mongomiger - Run tests with coverage
-      env:
-        GOMIGER_URI: mongodb://localhost:27017/gomiger_test
-      run: go test -v -coverprofile=coverage.out -covermode=count ./...
-      working-directory: ./mongomiger
-      continue-on-error: true
-    - name: mongomiger - Upload coverage to Codecov
-      uses: codecov/codecov-action@v5
-      with:
-        slug: ParteeLabs/gomiger
-        file: ./mongomiger/coverage.out
-        flags: mongomiger
-        name: mongomiger-${{ matrix.go-version }}-mongo-${{ matrix.mongodb-version }}
-        token: ${{ secrets.CODECOV_TOKEN }}
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go-version }}
+      - name: Cache Go modules
+        uses: actions/cache@v4
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ matrix.go-version }}-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-${{ matrix.go-version }}-
+      - name: Download dependencies
+        run: |
+          cd core && go mod download
+          cd ../mongomiger && go mod download
+          cd ../examples && go mod download
+      - name: core - Run tests with race detection
+        run: go test -v -race $(go list ./... | grep -vE './cmd|./generator/mg|./generator/scripts')
+        working-directory: ./core
+      - name: core - Run tests with coverage
+        run: go test -v -coverprofile=coverage.out -covermode=count $(go list ./... | grep -vE './cmd|./generator/mg|./generator/scripts')
+        working-directory: ./core
+        continue-on-error: true
+      - name: core - Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          slug: ParteeLabs/gomiger
+          files: ./core/coverage.out
+          flags: core
+          name: core-${{ matrix.go-version }}-mongo-${{ matrix.mongodb-version }}
+          token: ${{ secrets.CODECOV_TOKEN }}
+      - name: mongomiger - Run tests with race detection
+        env:
+          GOMIGER_URI: mongodb://localhost:27017/gomiger_test
+        run: go test -v -race ./...
+        working-directory: ./mongomiger
+      - name: mongomiger - Run tests with coverage
+        env:
+          GOMIGER_URI: mongodb://localhost:27017/gomiger_test
+        run: go test -v -coverprofile=coverage.out -covermode=count ./...
+        working-directory: ./mongomiger
+        continue-on-error: true
+      - name: mongomiger - Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          slug: ParteeLabs/gomiger
+          files: ./mongomiger/coverage.out
+          flags: mongomiger
+          name: mongomiger-${{ matrix.go-version }}-mongo-${{ matrix.mongodb-version }}
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   detect-modules:
     runs-on: ubuntu-latest
@@ -126,7 +126,7 @@ jobs:
         uses: securego/gosec@master
         with:
           # we let the report trigger content trigger a failure using the GitHub Security features.
-          args: '-no-fail -fmt sarif -out results.sarif ./...'
+          args: "-no-fail -fmt sarif -out results.sarif ./..."
       - name: Upload SARIF file
         uses: github/codeql-action/upload-sarif@v4
         with:
@@ -138,19 +138,19 @@ jobs:
     runs-on: ubuntu-latest
     needs: [test, lint]
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-go@v5
-      with:
-        go-version: ${{ env.GO_VERSION }}
-    - name: Build Core
-      run: go build $(go list ./... | grep -v './generator/mg')
-      working-directory: ./core
-    - name: Build mongomiger plugin
-      run: go build ./...
-      working-directory: ./mongomiger
-    - name: "Build Example: 0-mongomiger"
-      run: go build ./...
-      working-directory: ./examples/0-mongomiger
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+      - name: Build Core
+        run: go build $(go list ./... | grep -v './generator/mg')
+        working-directory: ./core
+      - name: Build mongomiger plugin
+        run: go build ./...
+        working-directory: ./mongomiger
+      - name: "Build Example: 0-mongomiger"
+        run: go build ./...
+        working-directory: ./examples/0-mongomiger
 
   release:
     name: Release
@@ -158,20 +158,20 @@ jobs:
     needs: [test, lint, build]
     if: github.event_name == 'release'
     steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-    - uses: actions/setup-go@v5
-      with:
-        go-version: ${{ env.GO_VERSION }}
-    - name: Run GoReleaser
-      uses: goreleaser/goreleaser-action@v6
-      with:
-        distribution: goreleaser
-        version: '~> v2'
-        args: release --clean
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          distribution: goreleaser
+          version: "~> v2"
+          args: release --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   dependency-review:
     name: Dependency Review

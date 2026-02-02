@@ -4,12 +4,14 @@ project_name: gomiger
 
 before:
   hooks:
-    - go mod tidy
-    - go generate ./...
+    - go work sync
+    - go mod tidy -C core
+    - go generate ./core/...
 
 builds:
   - id: gomiger-init
-    main: ./core/cmd/gomiger-init
+    dir: core
+    main: ./cmd/gomiger-init
     binary: gomiger-init
     goos:
       - linux
@@ -20,6 +22,8 @@ builds:
       - arm64
     env:
       - CGO_ENABLED=0
+    flags:
+      - -mod=readonly
     ldflags:
       - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}}
 
