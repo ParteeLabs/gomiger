@@ -155,6 +155,9 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
     needs: [test, lint, build]
     if: github.event_name == 'release'
     steps:
