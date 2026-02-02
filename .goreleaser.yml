@@ -29,12 +29,11 @@ builds:
 
 archives:
   - id: gomiger-init
-    builds:
+    ids:
       - gomiger-init
-    format: tar.gz
     format_overrides:
       - goos: windows
-        format: zip
+        formats: [zip]
     files:
       - README.md
       - LICENSE
@@ -42,9 +41,6 @@ archives:
 
 checksum:
   name_template: 'checksums.txt'
-
-snapshot:
-  name_template: '{{ incpatch .Version }}-next'
 
 changelog:
   sort: asc

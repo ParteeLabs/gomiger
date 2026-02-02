@@ -1,5 +1,3 @@
-//go:build ignore
-
 // Package main is an initialization tool for gomiger, a code generation utility.
 //
 // It provides functionality to initialize source code based on a configuration file (gomiger.rc).
